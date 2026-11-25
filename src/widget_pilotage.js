@@ -533,7 +533,9 @@ function ouvrirFenetreDecoupe(matId) {
   var fermer = function () { fermerFenetreDecoupe(matId); };
   document.getElementById('decoupeClose').onclick = fermer;
   document.getElementById('decoupeAnnuler').onclick = fermer;
-  document.getElementById('decoupeFond').onclick = fermer;
+  var boiteDec = document.querySelector('#decoupeModale .reglages-modale');
+  suivreSaisie(boiteDec);
+  document.getElementById('decoupeFond').onclick = function () { fermetureDouce(boiteDec, fermer); };
   document.getElementById('decoupeNombre').oninput = function () { redessinerMorceauxDecoupe(m); };
   document.getElementById('decoupeValider').onclick = function () { validerDecoupe(m); };
 
@@ -771,7 +773,9 @@ function ouvrirFenetreScission(lotId) {
   var fermer = function () { fermerFenetreScission(); };
   document.getElementById('scissionClose').onclick = fermer;
   document.getElementById('scissionAnnuler').onclick = fermer;
-  document.getElementById('scissionFond').onclick = fermer;
+  var boiteSci = document.querySelector('#scissionModale .reglages-modale');
+  suivreSaisie(boiteSci);
+  document.getElementById('scissionFond').onclick = function () { fermetureDouce(boiteSci, fermer); };
 
   redessinerChampsScission(lot, autresLotsMemeCategorie);
   redessinerListeScission(exemplaires);
@@ -2867,7 +2871,7 @@ async function load() {
         if (msgLocal) {
           msgLocal.textContent = texte;
           msgLocal.style.color = '#a3242a';
-          msgLocal.scrollIntoView({ block: 'nearest' });
+          defilerVers(msgLocal, { block: 'nearest' });
         }
       }
       if (bonEstVierge(bloc)) {
@@ -3508,7 +3512,7 @@ async function load() {
           /* ouvrir le bon correspondant */
           var bonEl = document.querySelector('#prets-list .bon[data-bon="' + bon + '"]');
           if (bonEl && !bonEl.classList.contains('ouvert')) bonEl.click();
-          if (bonEl) bonEl.scrollIntoView({ block: 'nearest' });
+          if (bonEl) defilerVers(bonEl, { block: 'nearest' });
         }, 150);
       }
     };
@@ -4143,7 +4147,7 @@ function openEditor(entity, rowId) {
   fermerEditeurs();
   box.innerHTML =
     '<div class="form-panel">' +
-      '<h4 style="margin:0 0 10px;font-size:13px;color:#2C4A3E">' + cfg.titre + '</h4>' +
+      enteteFenetre(cfg.titre, objetEdite(entity, row)) +
       (cfg.avertissement ? '<p class="hint">' + cfg.avertissement + '</p>' : '') +
       /* encart contextuel pour les incidents "Contrôle à réaliser" non encore traités :
          explique que le traitement passe par l'enregistrement d'un contrôle, pas par
@@ -4173,7 +4177,7 @@ function openEditor(entity, rowId) {
         '<span class="ed-msg form-msg"></span>' +
       '</div>' +
     '</div>';
-  box.scrollIntoView({ block: 'nearest' });
+  defilerVers(box, { block: 'nearest' });
   box.querySelector('.ed-save').onclick = function () { saveEditor(entity, rowId); };
   box.querySelector('.ed-cancel').onclick = function () { box.innerHTML = ''; };
   if (cfg.lier) cfg.lier(box, rowId);
@@ -4206,7 +4210,7 @@ function openCreator(entity) {
         '<span class="ed-msg form-msg"></span>' +
       '</div>' +
     '</div>';
-  box.scrollIntoView({ block: 'nearest' });
+  defilerVers(box, { block: 'nearest' });
   box.querySelector('.ed-cancel').onclick = function () { box.innerHTML = ''; };
   box.querySelector('.ed-save').onclick = function () { saveCreator(entity); };
   if (cfg.lier) cfg.lier(box);
@@ -5264,7 +5268,7 @@ function ouvrirAjoutExemplaires(lotId) {
   var lieuxOpts = refLists.lieux.map(function (l) { return '<option value="' + l.id + '">' + esc(l.nom) + '</option>'; }).join('');
   box.innerHTML =
     '<div class="form-panel">' +
-      '<h4 style="margin:0 0 4px;font-size:13px;color:#2C4A3E">Ajouter des exemplaires \u2014 ' + esc(lot.designation || ('lot #' + lotId)) + '</h4>' +
+      enteteFenetre('Ajouter des exemplaires', lot.designation || ('lot #' + lotId)) +
       '<p class="hint" style="margin:0 0 10px">Crée de nouveaux exemplaires rattachés à ce lot. L\'existant n\'est pas touché.</p>' +
       (prefixe
         ? '<label class="coche" style="margin:0 0 8px"><input type="checkbox" id="aeManuel"' + (manuelDefaut ? ' checked' : '') + '> Saisir les marquages à la main (au lieu de la numérotation automatique)</label>'
@@ -5285,7 +5289,7 @@ function ouvrirAjoutExemplaires(lotId) {
         '<span class="form-msg" id="aeMsg"></span>' +
       '</div>' +
     '</div>';
-  box.scrollIntoView({ block: 'nearest' });
+  defilerVers(box, { block: 'nearest' });
   box.querySelector('.ae-cancel').onclick = function () { box.innerHTML = ''; };
   document.getElementById('aeGo').onclick = function () { ajouterExemplaires(lotId, prefixe); };
   var chk = document.getElementById('aeManuel');
@@ -5532,7 +5536,7 @@ async function creerLot() {
     setTimeout(function () {
       load().then(function () {
         var nouveau = document.querySelector('#materiel-list .lot[data-lot="' + lotId + '"]');
-        if (nouveau) nouveau.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        if (nouveau) defilerVers(nouveau, { block: 'nearest', behavior: 'smooth' });
       });
     }, 100);
   } catch (e) {
@@ -5973,7 +5977,7 @@ function demarrerBonDepuisDemande(demId) {
       (adh ? '' : ' <span class="demande-note-alerte">(emprunteur a choisir : nom non reconnu)</span>');
     note.hidden = false;
   }
-  f.scrollIntoView({ block: 'nearest' });
+  defilerVers(f, { block: 'nearest' });
 }
 
 async function ignorerDemande(demId) {
@@ -6221,7 +6225,7 @@ function ouvrirEditeurBon(numero) {
   document.getElementById('formPret').style.display = 'none';
   var panneau = document.getElementById('bonEditeur');
   panneau.style.display = 'block';
-  panneau.scrollIntoView({ block: 'nearest' });
+  defilerVers(panneau, { block: 'nearest' });
 }
 
 async function enregistrerEditeurBon() {
@@ -6271,7 +6275,7 @@ async function enregistrerEditeurBon() {
 async function retourGroupe() {
   var msgLocal = document.getElementById('retMsg');
   function erreurLocaleRet(texte) {
-    if (msgLocal) { msgLocal.textContent = texte; msgLocal.style.color = '#a3242a'; msgLocal.scrollIntoView({ block: 'nearest' }); }
+    if (msgLocal) { msgLocal.textContent = texte; msgLocal.style.color = '#a3242a'; defilerVers(msgLocal, { block: 'nearest' }); }
   }
   var coches = Array.prototype.slice.call(document.querySelectorAll('#prets-list .ret-cb:checked'));
   if (!coches.length) { erreurLocaleRet('Cochez au moins un prêt a rendre.'); return; }
@@ -8039,7 +8043,7 @@ function ouvrirFicheExemplaire(matId) {
         }), ['Date', 'Par', 'Commentaire'], 'Aucun entretien enregistr\u00e9.') : '') +
       '</div>' +
     '</div>';
-  box.scrollIntoView({ block: 'nearest' });
+  defilerVers(box, { block: 'nearest' });
   afficherPhoto('lots', x.lot, 'fichePhoto', 'fiche-photo-img', 'Photo du modele', true);
   afficherDocsLot('ficheDocs', x.lot, x.achat);
   remplirGaleriePhotos('incidents', x.incidents.slice(0, 5), 'ficheInc-', 'Photo de l\'incident', false);
@@ -8191,7 +8195,7 @@ function ficheAction(matId, act, pretOuvert, typePreselect) {
     '<div class="form-actions"><button class="secondary" id="ffGo">Valider</button>' +
     '<button class="secondary" id="ffNon">Annuler</button>' +
     '<span class="form-msg" id="ffMsg"></span></div></div>';
-  zone.scrollIntoView({ block: 'nearest' });
+  defilerVers(zone, { block: 'nearest' });
   document.getElementById('ffNon').onclick = function () { zone.innerHTML = ''; };
   /* (2026.5.14) controle / incident depuis la fiche : pas de "A reparer" ni
      de "Reparation a prevoir" si la categorie est fermee a la reparation ET
@@ -8752,6 +8756,7 @@ function sortirDocument(html, nomFichier, paneFallback) {
   if (box) {
     box.innerHTML =
       '<div class="form-panel">' +
+        enteteFenetre('Document \u00e0 imprimer', String(nom || '').replace(/\.[a-z]+$/i, '')) +
         '<p class="hint">L\'ouverture d\'une fenetre et le telechargement sont bloques par Grist. ' +
         'Selectionnez le contenu ci-dessous et copiez-le, ou imprimez la page.</p>' +
         '<div style="background:#fff;padding:12px;border-radius:6px;max-height:420px;overflow:auto">' +
@@ -8760,7 +8765,7 @@ function sortirDocument(html, nomFichier, paneFallback) {
         '<div class="form-actions"><button class="secondary" onclick="document.getElementById(\'' +
           paneFallback + '\').innerHTML=\'\'">Fermer</button></div>' +
       '</div>';
-    box.scrollIntoView({ block: 'nearest' });
+    defilerVers(box, { block: 'nearest' });
   }
 }
 
@@ -10292,7 +10297,7 @@ function demanderSuppression(entity, id) {
           p13(motifBlocage) +
           '<div class="form-actions"><button class="secondary del-cancel">Fermer</button></div>' +
         '</div>';
-      box.scrollIntoView({ block: 'nearest' });
+      defilerVers(box, { block: 'nearest' });
       box.querySelector('.del-cancel').onclick = function () { box.innerHTML = ''; };
       return;
     }
@@ -10313,7 +10318,7 @@ function demanderSuppression(entity, id) {
         '<span class="del-msg form-msg"></span>' +
       '</div>' +
     '</div>';
-  box.scrollIntoView({ block: 'nearest' });
+  defilerVers(box, { block: 'nearest' });
   box.querySelector('.del-cancel').onclick = function () { box.innerHTML = ''; };
   box.querySelector('.del-go').onclick = function () { executerSuppression(entity, id); };
 }
@@ -10366,7 +10371,7 @@ function ouvrirRattachement() {
 
   box.innerHTML =
     '<div class="form-panel">' +
-      '<h4 style="margin:0 0 10px;font-size:13px;color:#2C4A3E">Rattacher a un lot</h4>' +
+      enteteFenetre('Rattacher \u00e0 un lot', orphelins.length + ' exemplaire' + (orphelins.length > 1 ? 's' : '') + ' sans lot') +
       '<p class="hint">Cochez les exemplaires à rattacher, puis choisissez le lot de destination. ' +
         'Ils hériteront aussitôt de son fabricant, de sa date de fabrication et de sa fin de vie.</p>' +
       '<div class="form-grid" style="grid-template-columns:1fr">' +
@@ -10392,7 +10397,7 @@ function ouvrirRattachement() {
         '<span id="ratMsg" class="form-msg"></span>' +
       '</div>' +
     '</div>';
-  box.scrollIntoView({ block: 'nearest' });
+  defilerVers(box, { block: 'nearest' });
 
   document.getElementById('ratCancel').onclick = function () { box.innerHTML = ''; };
   document.getElementById('ratTous').onchange = function () {
@@ -11186,7 +11191,7 @@ function majNoteChoixConfig(cle) {
 
 function fermerReglages() {
   var p = document.getElementById('reglagesPanel');
-  if (p) p.hidden = true;
+  if (p) { p.hidden = true; var b = p.querySelector('.reglages-modale'); if (b) delete b.dataset.sale; }
 }
 
 async function enregistrerReglages() {
@@ -11233,6 +11238,7 @@ async function enregistrerReglages() {
     CHAMPS_CONFIG.forEach(function (c) { CONFIG[c.cle] = valeurs[c.cle]; });
     appliquerConfig();
     msg.textContent = 'Réglages enregistrés.'; msg.style.color = '#1A6B34';
+    var bReg = document.querySelector('#reglagesPanel .reglages-modale'); if (bReg) delete bReg.dataset.sale;
     await load();
   } catch (e) {
     msg.textContent = 'Erreur : ' + e.message; msg.style.color = '#a3242a'; console.error(e);
@@ -11247,11 +11253,13 @@ function brancherReglages() {
   var fermer = document.getElementById('btnReglagesClose');
   if (fermer) fermer.onclick = fermerReglages;
   var fond = document.getElementById('reglagesFond');
-  if (fond) fond.onclick = fermerReglages;
+  var boiteReg = panneau.querySelector('.reglages-modale');
+  suivreSaisie(boiteReg);
+  if (fond) fond.onclick = function () { fermetureDouce(boiteReg, fermerReglages); };
   var save = document.getElementById('reglagesSave');
   if (save) save.onclick = enregistrerReglages;
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !panneau.hidden) fermerReglages();
+    if (e.key === 'Escape' && !panneau.hidden) fermetureDouce(boiteReg, fermerReglages);
   });
 }
 
@@ -11498,7 +11506,7 @@ new MutationObserver(function () {
      ils sont libres), donc tous les liens (lot, exemplaire, adherent...) restent
      justes sans recalcul. Colonnes absentes du document cible : ignorees et
      signalees ; colonnes nouvelles : vides. */
-var VERSION_EPILOG = '2026.5.37';   /* = premiere entree du CHANGELOG : controle par tests/test_27 */
+var VERSION_EPILOG = '2026.5.38';   /* = premiere entree du CHANGELOG : controle par tests/test_27 */
 /* Version affichee dans le pied de page (2026.5.26) : permet de savoir en un coup d'oeil quelle
    version tourne dans CE document (le code vit dans chaque document, une ancienne copie peut
    subsister apres une mise a jour) */
@@ -13359,6 +13367,178 @@ function impAfficherPlan() {
     }
   };
 }
+
+
+/* ==================== Fenetres d'edition (2026.5.38) ====================
+   Demande de Pierre (maquette validee) : toute edition et toute creation s'ouvre
+   dans une fenetre en surimpression ; la liste reste en place derriere.
+   PRINCIPE : on ne reecrit aucun formulaire. Les emplacements existants
+   (conteneurs *-editor, formulaires de creation form*) deviennent des fenetres
+   des qu'ils s'ouvrent : un observateur leur pose la classe .en-fenetre (CSS :
+   position fixe, centree, largeur maitrisee, defilement interne) et affiche un
+   voile. Fermer = vider le conteneur ou cliquer le bouton Annuler du formulaire,
+   comme avant.
+   SAISIE PROTEGEE (skill « fenetres protegees », adaptee) : tant que rien n'a ete
+   tape, clic sur le voile ou Echap ferment ; apres une saisie reelle, la fenetre
+   tremble et rappelle de fermer avec Annuler ou ✕. Les boutons explicites ferment
+   toujours. Meme regle pour Reglages, Decouper et Scinder. */
+var FENETRES = [
+  { id: 'materiel-editor' }, { id: 'prets-editor' }, { id: 'controles-editor' },
+  { id: 'incidents-editor' }, { id: 'budget-editor' }, { id: 'refs-editor' },
+  { id: 'formLot', annuler: 'btnCancelLot', titre: 'Nouveau lot de mat\u00e9riel', objet: function () { return 'Un mod\u00e8le achet\u00e9 et ses exemplaires'; } },
+  { id: 'formPret', annuler: 'btnCancelPret', large: true, titre: 'Nouveau pr\u00eat',
+    objet: function () { return aColonne('emprunts', 'numero_emprunt') ? 'Bon n\u00b0 ' + genererNumeroEmprunt() : 'Un ou plusieurs exemplaires'; } },
+  { id: 'formCtrl', annuler: 'btnCancelCtrl', large: true, titre: 'Nouveau contr\u00f4le', objet: function () { return 'Un ou plusieurs exemplaires'; } },
+  { id: 'formInc', annuler: 'btnCancelInc', large: true, titre: 'D\u00e9clarer un incident', objet: function () { return 'Un ou plusieurs exemplaires'; } },
+  { id: 'formDeclarerRep', annuler: 'btnCancelRep', large: true, titre: 'D\u00e9clarer une r\u00e9paration', objet: function () { return 'Un ou plusieurs exemplaires'; } },
+  { id: 'formAchat', annuler: 'btnCancelAchat', titre: 'Nouvelle commande', objet: function () { return 'Commande, facture et financement'; } },
+  { id: 'formEnt', annuler: 'btnCancelEnt', large: true, titre: 'D\u00e9clarer un entretien', objet: function () { return 'Un ou plusieurs exemplaires'; } }
+];
+/* En-tete des fenetres (maquette validee) : l'action en petites capitales rouges, puis l'objet en gras. */
+function enteteFenetre(action, objet) {
+  return '<div class="fenetre-entete"><div class="fenetre-action">' + esc(action) + '</div>' +
+    (objet ? '<div class="fenetre-objet">' + esc(objet) + '</div>' : '') + '</div>';
+}
+/* ce sur quoi porte un editeur : le marquage, le nom, la reference... */
+function objetEdite(entity, row) {
+  if (!row) return '';
+  var marq = function (id) { var m = (rawRows.materiels || []).filter(function (x) { return x.id === id; })[0]; return m ? (m.numero_marquage || ('#' + m.id)) : ''; };
+  var lotDe = function (id) { return ((refLists.lots || []).filter(function (l) { return l.id === id; })[0] || {}).designation || ''; };
+  var adh = function (id) { return ((refLists.adherents || []).filter(function (a) { return a.id === id; })[0] || {}).nom_complet || ''; };
+  var j = function (parts, sep) { return parts.filter(Boolean).join(sep); };
+  switch (entity) {
+    case 'lot': return row.designation || '';
+    case 'materiel': return j([row.numero_marquage, lotDe(row.lot)], ' \u2014 ');
+    case 'emprunt': return j([marq(row.materiel), adh(row.adherent)], ' \u00b7 ');
+    case 'controle': return j([marq(row.materiel), row.date_controle ? fmtDate(row.date_controle) : ''], ' \u00b7 ');
+    case 'incident': return j([marq(row.materiel), row.date_incident ? fmtDate(row.date_incident) : ''], ' \u00b7 ');
+    case 'adherent': return row.nom_complet || '';
+    case 'achat': return row.ref_commande || '';
+    default: return row.nom || '';
+  }
+}
+/* Les anciens « faire defiler jusqu'au formulaire » : un emplacement devenu fenetre est deja
+   sous les yeux, on ne fait plus bouger la page derriere (la liste garde sa place). */
+function defilerVers(el, opts) {
+  if (!el) return;
+  majFenetres();
+  if (el.classList && el.classList.contains('en-fenetre')) return;
+  el.scrollIntoView(opts);
+}
+function fenetreDef(el) { return FENETRES.filter(function (d) { return d.id === el.id; })[0]; }
+function fenetreOuverte(el) {
+  var d = fenetreDef(el);
+  if (!d) return false;
+  if (d.annuler) return el.style.display !== 'none' && el.getClientRects().length > 0;
+  return el.children.length > 0 && el.getClientRects().length > 0;
+}
+function fenetresOuvertes() {
+  return FENETRES.map(function (d) { return document.getElementById(d.id); })
+    .filter(function (el) { return el && fenetreOuverte(el); });
+}
+/* ferme sans question (boutons explicites, ou fenetre sans saisie) */
+function fermerFenetre(el) {
+  var d = fenetreDef(el);
+  if (!d) return;
+  delete el.dataset.sale;
+  if (d.annuler) {
+    var b = document.getElementById(d.annuler);
+    if (b) b.click(); else el.style.display = 'none';
+  } else {
+    el.innerHTML = '';
+  }
+}
+/* saisie protegee : commun aux fenetres d'edition et aux modales existantes */
+function avisSaisie(boite) {
+  if (boite) {
+    boite.classList.remove('fenetre-tremble'); void boite.offsetWidth; boite.classList.add('fenetre-tremble');
+    setTimeout(function () { boite.classList.remove('fenetre-tremble'); }, 450);
+  }
+  var ancien = document.getElementById('avisSaisie');
+  if (ancien) ancien.remove();
+  var a = document.createElement('div');
+  a.id = 'avisSaisie'; a.className = 'avis-saisie'; a.setAttribute('role', 'status');
+  a.textContent = 'Saisie en cours : fermez avec « Annuler » ou ✕.';
+  document.body.appendChild(a);
+  setTimeout(function () { if (a.parentNode) a.remove(); }, 3500);
+}
+function suivreSaisie(boite) {
+  if (!boite || boite.__suivi) return;
+  boite.__suivi = true;
+  ['input', 'change'].forEach(function (ev) {
+    boite.addEventListener(ev, function (e) {
+      if (!(e.isTrusted || window.__saisieTest)) return;           /* seulement ce que l'utilisateur tape */
+      var t = e.target;
+      if (!t || !t.matches || !t.matches('input,textarea,select')) return;
+      if (t.type === 'search' || t.type === 'file') return;          /* recherche, photo envoyee aussitot */
+      boite.dataset.sale = '1';
+    });
+  });
+}
+/* fermeture « douce » (voile, Echap) : refusee si une saisie est en cours */
+function fermetureDouce(boite, fermer) {
+  if (boite && boite.dataset.sale === '1') { avisSaisie(boite); return false; }
+  fermer();
+  return true;
+}
+function majFenetres() {
+  var ouvertes = [];
+  FENETRES.forEach(function (d) {
+    var el = document.getElementById(d.id);
+    if (!el) return;
+    var ouv = fenetreOuverte(el);
+    if (ouv !== !!el.__ouverte) {
+      el.__ouverte = ouv;
+      delete el.dataset.sale;                                          /* chaque ouverture repart propre */
+    }
+    if (el.classList.contains('en-fenetre') !== ouv) el.classList.toggle('en-fenetre', ouv);
+    var large = ouv && (d.large || !!el.querySelector('#ficheBoutons'));
+    if (el.classList.contains('fenetre-large') !== large) el.classList.toggle('fenetre-large', large);
+    if (ouv) {
+      suivreSaisie(el);
+      if (!el.querySelector(':scope > .fenetre-fermer')) {
+        var x = document.createElement('button');
+        x.type = 'button'; x.className = 'fenetre-fermer'; x.setAttribute('aria-label', 'Fermer'); x.textContent = '✕';
+        x.onclick = function () { fermerFenetre(el); };
+        el.insertBefore(x, el.firstChild);
+      }
+      if (d.titre) {
+        var t = el.querySelector(':scope > .fenetre-titre');
+        if (!t) {
+          t = document.createElement('div'); t.className = 'fenetre-titre';
+          el.insertBefore(t, el.querySelector(':scope > .fenetre-fermer').nextSibling);
+        }
+        var html = enteteFenetre(d.titre, d.objet ? d.objet() : '');
+        if (t.innerHTML !== html) t.innerHTML = html;            /* objet recalcule (ex. numero du prochain bon) */
+      }
+      ouvertes.push(el);
+    }
+  });
+  var voile = document.getElementById('voileFenetre');
+  if (!voile) {
+    voile = document.createElement('div');
+    voile.id = 'voileFenetre'; voile.className = 'voile-fenetre'; voile.hidden = true;
+    voile.addEventListener('click', function () {
+      fenetresOuvertes().forEach(function (el) { fermetureDouce(el, function () { fermerFenetre(el); }); });
+    });
+    document.body.appendChild(voile);
+  }
+  if (voile.hidden !== !ouvertes.length) voile.hidden = !ouvertes.length;
+  if (document.body.classList.contains('fenetre-ouverte') !== !!ouvertes.length) document.body.classList.toggle('fenetre-ouverte', !!ouvertes.length);
+}
+new MutationObserver(majFenetres).observe(document.body, {
+  subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class', 'hidden']
+});
+/* Echap : la fenetre d'edition ouverte, sauf si l'aide ou les reglages sont au-dessus (ils gerent la leur) */
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  var aide = document.getElementById('aidePanel'), reg = document.getElementById('reglagesPanel');
+  if ((aide && !aide.hidden) || (reg && !reg.hidden) || document.getElementById('decoupeModale') || document.getElementById('scissionModale')) return;
+  var ouv = fenetresOuvertes();
+  if (!ouv.length) return;
+  e.preventDefault();
+  ouv.forEach(function (el) { fermetureDouce(el, function () { fermerFenetre(el); }); });
+});
 
 /* ------------------------- navigation (2026.5.17) -------------------------
    Menu lateral (ordinateur) et barre du bas (telephone) : ils ACTIONNENT les

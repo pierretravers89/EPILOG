@@ -293,6 +293,12 @@
           <p>Le menu de gauche se <b>réduit en icônes</b> avec le bouton « Réduire le menu », en
              haut : on gagne de la place, une infobulle donne le nom de chaque icône, et votre choix
              est mémorisé sur cet ordinateur.</p>
+          <p><b>Modifier ou créer s'ouvre dans une fenêtre</b> par-dessus la liste, qui garde sa place :
+             en haut, l'action (« Modifier l'exemplaire ») et ce sur quoi elle porte (« CAS-002 — Casques
+             Boreo ») ; en bas, les boutons Enregistrer et Annuler, toujours visibles. Sur téléphone, la
+             fenêtre occupe tout l'écran. Tant que vous n'avez rien tapé, un clic à côté ou la touche Échap
+             la referment ; <b>dès que vous avez commencé une saisie</b>, ils ne ferment plus, pour ne pas la
+             perdre par mégarde : la fenêtre tremble et rappelle de fermer avec « Annuler » ou ✕.</p>
           <p>Sur <b>téléphone</b>, les tableaux s'affichent en <b>cartes</b> : le titre de chaque
              colonne est rappelé devant sa valeur, et les champs vides sont masqués. Les
              sous-rubriques de Suivi des EPI et des Listes du club forment une rangée de boutons
@@ -2140,6 +2146,55 @@
 
   .badge-clic { cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
   .badge-clic:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(27,54,104,0.35); }
+
+  /* ---- Fenetres d'edition (2026.5.38) : les emplacements d'edition s'ouvrent en surimpression ---- */
+  /* emplacements toujours hors du flux : leur contenu ne pousse jamais la liste, meme l'instant
+     avant de devenir fenetre (sinon le navigateur recale la page et l'utilisateur perd sa place) */
+  #materiel-editor, #prets-editor, #controles-editor, #incidents-editor, #budget-editor, #refs-editor,
+  #formLot, #formPret, #formCtrl, #formInc, #formDeclarerRep, #formAchat, #formEnt { position: fixed; z-index: 56; }
+  .voile-fenetre { position: fixed; inset: 0; z-index: 55; background: rgba(15, 30, 61, 0.48); }
+  .voile-fenetre[hidden] { display: none; }
+  body.fenetre-ouverte { overflow: hidden; }
+  .en-fenetre {
+    position: fixed !important; z-index: 56; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(880px, calc(100vw - 32px)); max-height: calc(100vh - 48px); overflow-y: auto;
+    margin: 0 !important; padding: 18px 24px 0; box-sizing: border-box;
+    background: var(--white); border: none; border-left: none; border-radius: 12px;
+    box-shadow: 0 24px 60px rgba(15, 30, 61, 0.35);
+  }
+  .en-fenetre.fenetre-large { width: min(1240px, calc(100vw - 32px)); }
+  .en-fenetre > .form-panel { margin: 0; padding: 0; border: none; box-shadow: none; background: transparent; }
+  .en-fenetre > .form-panel > h4:first-of-type, .en-fenetre > h4:first-of-type { font-size: 18px !important; color: var(--text-main) !important; padding-right: 52px; }
+  .en-fenetre .form-actions:last-of-type {
+    position: sticky; bottom: 0; z-index: 1; margin: 16px -24px 0; padding: 12px 24px;
+    background: var(--zebra); border-top: 1px solid var(--ice-border);
+  }
+  .fenetre-fermer {
+    position: sticky; top: 0; float: right; z-index: 2; width: 44px; height: 44px; margin: -6px -10px 0 8px;
+    border: 1px solid var(--ice-border); background: var(--white); border-radius: 8px;
+    font-size: 18px; line-height: 1; color: var(--text-mid); cursor: pointer;
+  }
+  .fenetre-fermer:hover { background: var(--ice-hover); }
+  .fenetre-titre { margin: 0; }
+  .fenetre-entete { margin: 0 0 14px; padding-right: 52px; }
+  .fenetre-action { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); }
+  .fenetre-objet { font-size: 19px; font-weight: 700; color: var(--text-main); margin-top: 2px; }
+  .form-panel:not(.en-fenetre) > .fenetre-titre { display: none; }
+  @keyframes fenetreTremble { 0%,100% { translate: 0 0; } 20% { translate: -7px 0; } 40% { translate: 6px 0; } 60% { translate: -4px 0; } 80% { translate: 3px 0; } }
+  .fenetre-tremble { animation: fenetreTremble 0.4s ease; }
+  .avis-saisie {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 9999;
+    background: var(--warn-bg); color: var(--warn-fg); border: 1px solid #E8C48A;
+    padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    box-shadow: 0 4px 12px rgba(15, 30, 61, 0.2);
+  }
+  @media (max-width: 640px) {
+    .en-fenetre, .en-fenetre.fenetre-large {
+      left: 0; top: 0; transform: none; width: 100%; height: 100%; max-height: none;
+      border-radius: 0; padding: 14px 16px 0;
+    }
+    .en-fenetre .form-actions:last-of-type { margin: 16px -16px 0; padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px)); }
+  }
 
   /* Toast flottant en bas à droite */
   .toast-message {

@@ -2291,3 +2291,11 @@ Logiciel sous EUPL 1.2, documentation sous CC BY-SA 4.0. L'EUPL demande la menti
 
 Texte seulement, dans `src/widget_pilotage.html` : sous-section « Où trouver la dernière version » de `#sec-miseajour` (liens vers le dépôt, `/releases`, `/issues`, tous en `target="_blank"`) et rubrique « Code source et mises à jour » dans `#sec-apropos` (style `.apropos-desc a`). Adresse du dépôt : `https://github.com/pierretravers89/EPILOG`. Test : `test_40`.
 
+---
+
+### 7.87 Fenêtres d'édition et saisie protégée (2026.5.38)
+
+Aucun formulaire réécrit. `FENETRES` liste les emplacements : conteneurs `*-editor` (ouverts = non vides) et formulaires de création `form*` (ouverts = `style.display` ≠ `none`, avec leur bouton Annuler). Un `MutationObserver` appelle `majFenetres()` : classe `.en-fenetre` (+ `.fenetre-large`), bouton ✕ (`.fenetre-fermer`), en-tête des formulaires de création, voile `#voileFenetre`, `body.fenetre-ouverte`. Ces emplacements sont `position: fixed` en permanence (CSS) : insérés dans le flux même un instant, ils déclenchaient le recalage de défilement (*scroll anchoring*) de Chrome. Les `scrollIntoView` passent par `defilerVers()`, sans effet sur une fenêtre.
+
+En-têtes : `enteteFenetre(action, objet)` ; `objetEdite(entity, row)` pour l'éditeur générique. Saisie protégée : `suivreSaisie(boite)` marque `data-sale` sur un `input`/`change` de confiance (hors recherche et fichier) ; `fermetureDouce(boite, fermer)` refuse la fermeture par voile ou Échap si la boîte est « sale » (`avisSaisie` : tremblement + message). Remise à zéro à chaque ouverture. Appliqué aussi aux modales Réglages, Découpe, Scission. Écart assumé avec la skill d'origine : Échap ne demande pas confirmation, il se comporte comme le clic à côté. Test : `test_41`.
+

@@ -26,7 +26,7 @@ with ouvrir(D) as page:
     R.verifier(alerte(page, "#formLot"), "creation : changer la categorie recalcule l'avertissement")
     txt = page.inner_text("#formLot .alerte-nom-lot")
     R.verifier("distingue" in sa(txt), "le message explique quoi faire : %r" % txt)
-    page.click("#btnToggleLot")
+    page.click("#btnCancelLot")   # (2026.5.38) le formulaire est en fenetre : on le ferme par Annuler
 
     # 2. edition du lot
     page.evaluate("id => openEditor('lot', id)", ids_lot["Cordes 70 m"]); page.wait_for_timeout(50)

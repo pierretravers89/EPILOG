@@ -6,6 +6,20 @@ saisons d'un club, pas des sprints.
 
 ---
 
+## [2026.5.38] — 2026-11-25
+
+### Fenêtres d'édition et saisie protégée
+
+- **Toute modification et toute création s'ouvre dans une fenêtre** par-dessus la liste, qui garde sa place : les 10 éditeurs (lot, exemplaire, prêt, contrôle, incident, catégorie, lieu, fournisseur, adhérent, commande), les 7 formulaires de création (lot, prêt, contrôle, incident, réparation, commande, entretien), « Ajouter des exemplaires », « Rattacher à un lot » et la fiche d'un exemplaire.
+- Deux largeurs : **standard** (880 px) et **large** (1 240 px, formulaires à listes à cocher et fiche), jamais toute la largeur d'un grand écran ; défilement à l'intérieur de la fenêtre, boutons Enregistrer / Annuler fixés en bas ; **plein écran sur téléphone**.
+- **En-tête** de chaque fenêtre : l'action en petites capitales rouges, puis ce sur quoi elle porte (« MODIFIER L'EXEMPLAIRE / CAS-002 — Casques Boreo », « NOUVEAU PRÊT / Bon n° 2026-015 »). Le document de secours affiché quand Grist bloque l'ouverture d'un onglet porte aussi un titre.
+- **Saisie protégée** : sans saisie, un clic à côté ou Échap ferment ; après une saisie, ils ne ferment plus (la fenêtre tremble, un message rappelle « fermez avec Annuler ou ✕ »). Les boutons ✕, Annuler et Enregistrer ferment toujours. Même règle pour **Réglages du club**, **Découper un exemplaire** et **Scinder un lot**, qui fermaient jusqu'ici au moindre clic à côté en perdant la saisie.
+- La page ne défile plus à l'ouverture d'un formulaire.
+- Étape 2, à venir : les actions de la fiche (prêter, contrôler, incident…) en seconde fenêtre.
+- Aide intégrée complétée. Test : `test_41_fenetres_edition.py` ; `test_09` adapté (le formulaire se ferme par Annuler) ; garde de l'aide (`test_27`) complétée.
+
+---
+
 ## [2026.5.37] — 2026-11-25
 
 ### Aide : dépôt GitHub et mise à jour
