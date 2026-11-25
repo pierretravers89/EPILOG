@@ -1,0 +1,31 @@
+# Documents Grist — c'est le registre du club, jamais dans un dépôt public
+*.grist
+*.sqlite3
+
+# Exports produits par l'outil
+epilog-*.csv
+epilog-*.html
+
+# Bureautique
+~$*
+.~lock.*#
+*.tmp
+
+# Systèmes
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*~
+
+# Notes de travail internes (identifiants de documents, échanges) — jamais publiées
+REPRISE_CONVERSATION.md
+
+# Tests : bibliothèques servies localement et caches
+vendor/
+__pycache__/
+*.pyc

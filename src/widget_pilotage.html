@@ -1,0 +1,2726 @@
+<!-- EPILOG — © 2026 Pierre Travers — Licensed under the EUPL v1.2 (SPDX-License-Identifier: EUPL-1.2) -->
+<!-- Si le Custom Widget Builder n'injecte pas deja l'API Grist, garder la ligne suivante -->
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+
+<!-- ════════════════════ EN-TÊTE ════════════════════ -->
+<header class="header">
+  <svg class="header-mountain" viewBox="0 0 900 80" preserveAspectRatio="none"
+       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <polygon points="0,80 80,30 140,52 220,8 300,44 370,22 440,42 520,5 600,32 670,16 750,40 830,12 900,34 900,80"
+             fill="rgba(255,255,255,0.05)"/>
+    <polygon points="0,80 60,44 100,60 170,20 240,48 310,32 390,54 470,12 550,42 630,24 720,50 800,20 900,46 900,80"
+             fill="rgba(255,255,255,0.04)"/>
+  </svg>
+
+  <div class="header-inner">
+    <div class="header-emblem" aria-hidden="true">
+      <!-- Logo EPILOG : mousqueton + épicéa -->
+      <svg class="logo-epilog" viewBox="140 100 300 390" width="30" height="30"
+           xmlns="http://www.w3.org/2000/svg">
+        <path class="logo-carabiner" d="M 235 115 C 345 95, 410 142, 410 225 L 410 355 C 410 438, 325 475, 245 465 C 180 456, 160 410, 160 355 L 160 225 C 160 160, 180 125, 235 115 Z"/>
+        <rect class="logo-gate" x="397" y="225" width="26" height="130" rx="7"/>
+        <rect class="logo-lock" x="390" y="270" width="40" height="44" rx="8"/>
+        <rect class="logo-trunk" x="289" y="380" width="22" height="40" rx="3"/>
+        <polygon class="logo-tier-4" points="300,390 210,390 257,335 233,335 300,270 367,335 343,335 390,390"/>
+        <polygon class="logo-tier-3" points="300,335 230,335 267,288 248,288 300,223 352,288 333,288 370,335"/>
+        <polygon class="logo-tier-2" points="300,280 248,280 277,242 263,242 300,185 337,242 323,242 352,280"/>
+        <polygon class="logo-tier-1" points="300,215 267,215 300,140 333,215"/>
+      </svg>
+    </div>
+
+    <div class="header-titles">
+      <h1>Gestion du matériel et des EPI</h1>
+      <p class="subtitle">Mon club · Fédération</p>
+      <span class="red-rule" aria-hidden="true"></span>
+      <p class="header-soft">EPI<span>LOG</span></p>
+    </div>
+
+
+    <div class="header-actions">
+      <button type="button" class="header-help" id="btnReglages" title="Réglages du club" aria-label="Ouvrir les réglages du club">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <button type="button" class="header-help" id="btnAide" title="Aide" aria-label="Afficher l'aide">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M6 6.1a2 2 0 1 1 2.6 1.9c-.4.15-.6.5-.6.9v.4"
+              stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="0.95" fill="currentColor"/>
+      </svg>
+    </button>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════ ERREURS ════════════════════ -->
+<div class="erreur-globale" id="erreurGlobale" hidden role="alert">
+  <div class="erreur-inner">
+    <span class="erreur-titre">Erreur JavaScript</span>
+    <pre id="erreurTexte"></pre>
+    <button type="button" class="secondary" id="erreurFermer">Masquer</button>
+  </div>
+</div>
+
+<!-- ════════════════════ ONGLETS ════════════════════ -->
+<nav class="tabs-bar" aria-label="Sections">
+  <div class="tabs">
+    <div class="tab active" data-t="apercu">Vue d'ensemble</div>
+    <div class="tab" data-t="materiel">Matériel</div>
+    <div class="tab" data-t="prets">Prêts</div>
+    <div class="tab" data-t="controles">Suivi des EPI</div>
+    <div class="tab" data-t="budget">Achats et budget</div>
+    <div class="tab" data-t="refs">Listes du club</div>
+    <div class="tab" data-t="donnees">Import / export</div>
+  </div>
+</nav>
+
+<!-- ════════════════════ AIDE ════════════════════ -->
+<section class="reglages" id="reglagesPanel" hidden>
+  <div class="reglages-fond" id="reglagesFond"></div>
+  <div class="reglages-modale" role="dialog" aria-modal="true" aria-label="Réglages du club">
+    <div class="reglages-head">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Réglages du club</span>
+      <button type="button" class="reglages-close" id="btnReglagesClose" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="reglages-corps">
+      <div class="sous-onglets" id="reglages-so">
+        <button type="button" class="sous-onglet actif" data-se="identite">Identité &amp; apparence</button>
+        <button type="button" class="sous-onglet" data-se="fonctionnement">Fonctionnement</button>
+        <button type="button" class="sous-onglet" data-se="sauvegarde">Sauvegarder / importer des données</button>
+      </div>
+      <div id="reglagesCorps"></div>
+      <div id="reglagesFonctionnement" hidden></div>
+      <div id="reglagesSauvegarde" hidden></div>
+    </div>
+    <div class="reglages-pied">
+      <button type="button" id="reglagesSave">Enregistrer</button>
+      <span id="reglagesMsg" class="form-msg"></span>
+    </div>
+  </div>
+</section>
+
+<section class="aide" id="aidePanel" hidden>
+  <div class="aide-fond" id="aideFond"></div>
+
+  <div class="aide-modale" role="dialog" aria-modal="true" aria-label="Aide">
+    <div class="aide-head">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+      </svg>
+      <span>Aide</span>
+      <button type="button" class="aide-pdf" id="btnAidePdf" title="Télécharger l'aide en PDF" aria-label="Télécharger l'aide en PDF">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        <span>PDF</span>
+      </button>
+      <button type="button" class="aide-close" id="btnAideClose" aria-label="Fermer l'aide">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="aide-corps">
+      <nav class="aide-nav" id="aideNav" aria-label="Sommaire de l'aide">
+
+        <button type="button" class="aide-nav-item principale actif" data-sec="bienvenue">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 8-5.5 2.5L8 16l5.5-2.5L16 8z"/></svg>
+          <span class="aide-nav-label">Bienvenue</span></button>
+
+        <div class="aide-nav-groupe">Premiers pas</div>
+        <button type="button" class="aide-nav-item" data-sec="miseenroute">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg>
+          <span class="aide-nav-label">Mise en route</span></button>
+        <button type="button" class="aide-nav-item" data-sec="geste">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span class="aide-nav-label">Le geste unique</span></button>
+        <button type="button" class="aide-nav-item" data-sec="objets">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8l-9-5-9 5v8l9 5 9-5z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>
+          <span class="aide-nav-label">Lot et exemplaire</span></button>
+        <button type="button" class="aide-nav-item" data-sec="marquage">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><path d="M7.5 7.5h.01"/></svg>
+          <span class="aide-nav-label">Cliquez un marquage</span></button>
+
+        <div class="aide-nav-groupe">Au quotidien</div>
+        <button type="button" class="aide-nav-item" data-sec="prets">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 6h18"/><path d="M7 22l-4-4 4-4"/><path d="M21 18H3"/></svg>
+          <span class="aide-nav-label">Prêter et rendre</span></button>
+        <button type="button" class="aide-nav-item" data-sec="controles">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+          <span class="aide-nav-label">Contrôler les EPI</span></button>
+        <button type="button" class="aide-nav-item" data-sec="incidents">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span class="aide-nav-label">Déclarer un incident</span></button>
+
+        <div class="aide-nav-groupe">Comprendre</div>
+        <button type="button" class="aide-nav-item" data-sec="fiche">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+          <span class="aide-nav-label">La fiche de vie</span></button>
+        <button type="button" class="aide-nav-item" data-sec="statuts">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/></svg>
+          <span class="aide-nav-label">Les statuts</span></button>
+        <button type="button" class="aide-nav-item" data-sec="reparation">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 1.4 0l1.6-1.6a3 3 0 0 1 0 4l-4 4a3 3 0 0 1-4 0L8 14a3 3 0 0 1 0-4l4-4a3 3 0 0 1 4 0l-1.6 1.6a1 1 0 0 0 0 1.4z"/><path d="m2 22 5.5-5.5"/></svg>
+          <span class="aide-nav-label">Réparer un équipement</span></button>
+        <button type="button" class="aide-nav-item" data-sec="suivi-reparation">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span class="aide-nav-label">Suivre et clore une réparation</span></button>
+        <button type="button" class="aide-nav-item" data-sec="entretien">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>
+          <span class="aide-nav-label">Déclarer un entretien</span></button>
+        <button type="button" class="aide-nav-item" data-sec="vetuste">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/><path d="M12 14v3l2 1"/></svg>
+          <span class="aide-nav-label">Fin de vie et vétusté</span></button>
+        <button type="button" class="aide-nav-item" data-sec="cartes">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v7l-4 2v-9L3 4z"/></svg>
+          <span class="aide-nav-label">Les cartes-filtres</span></button>
+
+        <div class="aide-nav-groupe">Gérer le parc</div>
+        <button type="button" class="aide-nav-item" data-sec="listes">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span class="aide-nav-label">Listes du club</span></button>
+        <button type="button" class="aide-nav-item" data-sec="bilan">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><rect x="5" y="11" width="4" height="7"/><rect x="10" y="6" width="4" height="12"/><rect x="15" y="14" width="4" height="4"/></svg>
+          <span class="aide-nav-label">Bilan et budget</span></button>
+        <button type="button" class="aide-nav-item" data-sec="sauvegarde">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          <span class="aide-nav-label">Sauvegarder et exporter</span></button>
+        <button type="button" class="aide-nav-item" data-sec="import">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M5 3h14"/></svg>
+          <span class="aide-nav-label">Importer un inventaire</span></button>
+        <button type="button" class="aide-nav-item" data-sec="structure">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/></svg>
+          <span class="aide-nav-label">Structure du document</span></button>
+        <button type="button" class="aide-nav-item" data-sec="miseajour">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+          <span class="aide-nav-label">Mettre à jour EPILOG</span></button>
+        <button type="button" class="aide-nav-item" data-sec="photos">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5L5 19"/></svg>
+          <span class="aide-nav-label">Photos et documents</span></button>
+        <button type="button" class="aide-nav-item" data-sec="supprimer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          <span class="aide-nav-label">Supprimer ou réformer</span></button>
+
+        <div class="aide-nav-groupe">Aller plus loin</div>
+        <button type="button" class="aide-nav-item" data-sec="diagnostic">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+          <span class="aide-nav-label">Diagnostic</span></button>
+        <button type="button" class="aide-nav-item" data-sec="apropos">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>
+          <span class="aide-nav-label">À propos</span></button>
+        <button type="button" class="aide-nav-item" id="aideNavReglages">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span class="aide-nav-label">Réglages du club</span></button>
+      </nav>
+
+      <div class="aide-sections" id="aideSections">
+
+        <section class="aide-sec actif" id="sec-bienvenue">
+          <div class="aide-hero">
+            <div class="aide-hero-logo">
+              <!-- Pictogramme : classes lc-* volontairement identiques a celles du
+                   logo complet, pour que le CSS de l'aide imprimable les couvre deja. -->
+              <svg class="logo-complet" viewBox="140 100 300 390"
+                   xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo EPILOG">
+                <path class="lc-carabiner" d="M 235 115 C 345 95, 410 142, 410 225 L 410 355 C 410 438, 325 475, 245 465 C 180 456, 160 410, 160 355 L 160 225 C 160 160, 180 125, 235 115 Z"/>
+                <rect class="lc-gate" x="397" y="225" width="26" height="130" rx="7"/>
+                <rect class="lc-lock" x="390" y="270" width="40" height="44" rx="8"/>
+                <rect class="lc-trunk" x="289" y="380" width="22" height="40" rx="3"/>
+                <polygon class="lc-tier-4" points="300,390 210,390 257,335 233,335 300,270 367,335 343,335 390,390"/>
+                <polygon class="lc-tier-3" points="300,335 230,335 267,288 248,288 300,223 352,288 333,288 370,335"/>
+                <polygon class="lc-tier-2" points="300,280 248,280 277,242 263,242 300,185 337,242 323,242 352,280"/>
+                <polygon class="lc-tier-1" points="300,215 267,215 300,140 333,215"/>
+              </svg>
+            </div>
+            <div class="aide-hero-texte">
+              <div class="aide-hero-nom">EPI<span>LOG</span></div>
+              <div class="aide-hero-baseline">Gestion des EPI et du matériel de montagne</div>
+              <div class="aide-hero-club" id="heroClub">Mon club</div>
+            </div>
+          </div>
+
+          <h3>Bienvenue</h3>
+          <p>Cet outil sert à <b>prouver</b> que le matériel de sécurité du club est suivi.
+             Cordes, baudriers, mousquetons et casques sont des équipements de protection
+             individuelle : la fédération impose d'en tracer chaque exemplaire — mise en service,
+             contrôles, incidents, fin de vie.</p>
+          <div class="encadre">Un tableur dit ce qu'on possède. Ici, chaque objet a une
+             <b>fiche de vie</b> : c'est elle qu'on présente en cas de contrôle fédéral ou d'accident.</div>
+
+          <h4>Comment c'est organisé</h4>
+          <p>Le parc se lit à deux niveaux : un <b>lot</b> (des articles identiques achetés ensemble)
+             contient des <b>exemplaires</b> (les objets physiques, chacun avec son marquage).
+             Tout le reste en découle.</p>
+          <p>Six rubriques : <b>Vue d'ensemble</b> pour les alertes du jour, <b>Matériel</b> pour
+             l'inventaire, <b>Prêts</b>, <b>Suivi des EPI</b> (contrôles, incidents, réparations,
+             entretien), <b>Achats et budget</b>, et <b>Listes du club</b> pour les catégories, lieux,
+             fournisseurs et adhérents.</p>
+          <p>Sur ordinateur, on passe de l'une à l'autre par le <b>menu à gauche</b> ; sur
+             téléphone, par la <b>barre en bas de l'écran</b> (les rubriques moins courantes sont
+             sous « Plus ») ; sur un écran intermédiaire, par les onglets en haut.</p>
+          <p>Le menu de gauche se <b>réduit en icônes</b> avec le bouton « Réduire le menu », en
+             haut : on gagne de la place, une infobulle donne le nom de chaque icône, et votre choix
+             est mémorisé sur cet ordinateur.</p>
+          <p>Sur <b>téléphone</b>, les tableaux s'affichent en <b>cartes</b> : le titre de chaque
+             colonne est rappelé devant sa valeur, et les champs vides sont masqués. Les
+             sous-rubriques de Suivi des EPI et des Listes du club forment une rangée de boutons
+             arrondis qu'on fait glisser du doigt. Dans un lot, seule « Fiche du lot » reste visible :
+             le bouton « ⋯ » révèle Registre, Scinder, Éditer et Supprimer.</p>
+          <div class="encadre"><b>Ouvrir EPILOG sans l'interface de Grist.</b> Copiez l'adresse de la
+             page EPILOG dans Grist et ajoutez <b>?style=singlePage</b> à la fin (avant un éventuel
+             « # »). Grist n'affiche plus ses tables ni ses menus : seulement EPILOG. Mettez ce lien en
+             favori, ou sur l'écran d'accueil du téléphone. C'est un confort d'affichage, pas une
+             protection : vos droits dans Grist restent les mêmes.</div>
+
+          <h4>Les trois réflexes</h4>
+          <p><b>1. Cliquez un marquage.</b> Les pastilles bleues ouvrent la fiche complète d'un
+             exemplaire, depuis n'importe quelle liste.
+             <a class="aide-lien" data-sec="marquage">En savoir plus</a></p>
+          <p><b>2. Cliquez les grands chiffres.</b> Les cartes en haut des rubriques sont des filtres :
+             elles font apparaître ce qu'il y a à traiter.
+             <a class="aide-lien" data-sec="cartes">En savoir plus</a></p>
+          <p><b>3. Cochez, puis validez une fois.</b> Prêter, rendre, contrôler et déclarer un
+             incident suivent tous le même geste, pour un ou cent exemplaires.
+             <a class="aide-lien" data-sec="geste">En savoir plus</a></p>
+
+          <div class="encadre">Vous n'écrivez jamais un statut : le logiciel le déduit des faits
+             enregistrés. C'est ce qui garantit qu'un matériel réformé ne peut pas réapparaître
+             comme disponible. <a class="aide-lien" data-sec="statuts">Voir les statuts</a></div>
+        </section>
+
+        <section class="aide-sec" id="sec-miseenroute">
+          <h3>Mise en route</h3>
+          <p>Vous démarrez avec une base vide ? Voici l'ordre à suivre. Chaque étape s'appuie sur la
+             précédente : on ne peut pas créer un lot sans catégorie, ni un exemplaire sans lot.
+             L'outil vous guide aussi à l'écran — tant qu'une étape manque, les rubriques concernées
+             affichent quoi faire.</p>
+
+          <h4>1. Les listes de base — rubrique « Listes du club »</h4>
+          <p>Créez d'abord au moins une <b>catégorie</b> (baudrier, corde, mousqueton…), un ou deux
+             <b>lieux de stockage</b>, et vos <b>fournisseurs</b> si vous voulez suivre les achats.
+             Ces listes alimentent tout le reste.</p>
+
+          <h4>2. Un premier lot — rubrique Matériel</h4>
+          <p>Un <b>lot</b> représente un modèle acheté : fabricant, modèle, durée de vie, quantité.
+             C'est le modèle, pas encore les pièces individuelles.</p>
+
+          <h4>3. Les exemplaires — rubrique Matériel</h4>
+          <p>Ajoutez au lot ses <b>exemplaires numérotés</b>, un par pièce physique, avec leur
+             marquage. C'est là que le parc prend vie : dès le premier exemplaire, vous pouvez
+             prêter et contrôler.</p>
+
+          <h4>4. Ensuite, au fil de l'eau</h4>
+          <p>Enregistrez les <b>contrôles</b> (Suivi des EPI) et les <b>prêts</b> (Prêts) quand ils
+             surviennent. L'outil calcule seul les statuts, la vétusté et les alertes — vous n'avez
+             jamais à les tenir à jour à la main.</p>
+
+          <div class="encadre"><b>Au passage :</b> personnalisez l'outil via « ? » →
+             <b>Réglages du club</b> (nom, fédération, couleurs, liens utiles). Et la liste
+             « Premiers pas » de la Vue d'ensemble coche ces étapes à mesure, puis disparaît une
+             fois le socle en place.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-geste">
+          <h3>Le geste unique : on coche, on valide</h3>
+          <p>Quatre opérations suivent exactement le même principe : <b>prêter</b>,
+             <b>enregistrer un retour</b>, <b>contrôler</b> et <b>déclarer un incident</b>.</p>
+          <p>On filtre si besoin, on coche un ou plusieurs exemplaires, on remplit les champs
+             communs, on valide une seule fois.</p>
+          <div class="encadre">Une sortie de douze baudriers se saisit en une fois, pas douze.
+             Le bouton indique toujours combien d'exemplaires sont sélectionnés.</div>
+          <p>Partout, un bouton <b>« Tout cocher / décocher »</b> permet de tout prendre d'un coup,
+             puis de retirer les exceptions. Et partout, <b>le filtre ne fait que changer la vue</b> :
+             ce qu'on a coché reste sélectionné quand on change de filtre, avec un récapitulatif de
+             la sélection sous la liste.</p>
+          <div class="encadre">Le logiciel refuse les dates impossibles — à la création comme à la
+             correction : un retour avant l'emprunt, une réception avant la commande, une mise en
+             service avant la fabrication, ou une date dans le futur pour un fait déjà survenu. Une
+             date laissée vide est toujours acceptée.</div>
+          <div class="encadre"><b>Aller vite à un exemplaire.</b> Rubrique <b>Matériel</b>, tapez son
+             marquage dans « Rechercher » : la liste se réduit à cet exemplaire, cliquez-le pour
+             ouvrir sa fiche. La même case trouve aussi un lot, un modèle ou un fabricant.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-objets">
+          <h3>Lot et exemplaire</h3>
+          <p>Un <b>lot</b> regroupe des articles identiques achetés ensemble : même fabricant,
+             même modèle, même année. Il porte ce qui leur est commun — date de fabrication,
+             durée de vie, prix unitaire, photo du modèle.</p>
+          <p>Un <b>exemplaire</b> est un article physique du lot. Il porte ce qui lui est propre :
+             son marquage, son lieu, son statut. C'est lui qu'on prête, qu'on contrôle, et qui
+             subit un incident.</p>
+          <div class="encadre">Un achat isolé n'est pas un cas à part : c'est un lot de quantité 1.</div>
+          <div class="encadre"><b>Erreur sur le nombre ?</b> Pas besoin de refaire le lot. <b>Trop
+             d'exemplaires</b> : supprimez ceux en trop, un par un. <b>Pas assez</b> : dans
+             <b>« Modifier le lot » → « Compléter ce lot »</b>, le bouton <b>« + Ajouter des
+             exemplaires »</b> en crée autant qu'il faut, sans jamais toucher à l'existant. Il
+             <b>numérote à la suite</b> quand le lot suit le préfixe, et bascule en <b>saisie
+             manuelle</b> pour un lot aux marquages personnalisés (reprise d'inventaire) — un
+             interrupteur laisse toujours le choix.</div>
+          <div class="encadre"><b>Par où commencer ?</b> Tant que la base est vide, chaque écran
+             indique la prochaine étape, dans l'ordre : d'abord une <b>catégorie</b> (dans Listes
+             du club), puis un <b>lot</b>, puis ses <b>exemplaires</b> — on ne peut pas créer un lot
+             sans catégorie, ni un exemplaire sans lot. Une liste « Premiers pas » sur la Vue
+             d'ensemble suit l'avancement et s'efface dès le premier exemplaire enregistré.</div>
+
+          <h4>Le marquage se remplit tout seul</h4>
+          <p>Si vous donnez un <b>préfixe</b> à une catégorie (par exemple <b>BAU-</b> pour les
+             baudriers), la création d'un lot le reporte automatiquement et numérote à la suite
+             du plus grand numéro déjà existant. Deux lots de baudriers ne peuvent donc plus
+             recommencer tous les deux à 001.</p>
+          <div class="encadre">Deux champs optionnels permettent d'identifier chaque exemplaire
+             rapidement dans la liste : <b>couleur</b> (texte libre : « rouge », « bleu glacier »…)
+             et <b>taille</b> (texte libre : « M », « L », « 8,5 »…). Laissez-les vides si
+             l'information n'est pas disponible — le formulaire le signale pour éviter de bloquer
+             la saisie.</div>
+          <div class="encadre">Un marquage identique à celui d'un autre exemplaire est refusé à
+             la saisie — la casse et les espaces sont ignorés, donc « bau-001 » et « BAU-001 »
+             sont vus comme le même. Le <a class="aide-lien" data-sec="diagnostic">diagnostic</a>
+             signale les doublons déjà présents et les marquages qui ne suivent pas le préfixe
+             de leur catégorie.</div>
+          <p>Le préfixe se définit dans <b>Listes du club</b>, sur la catégorie.</p>
+
+          <h4>Reprendre un stock déjà marqué</h4>
+          <p>Pour du matériel que le club possède déjà, cochez <b>« Reprise d'inventaire »</b> en
+             haut du formulaire de lot. Le préfixe automatique se désactive et vous saisissez les
+             marquages réels, <b>un par ligne</b>, tels qu'ils sont sur les objets — même s'ils ne
+             suivent aucun format. La date de fabrication peut rester vide.</p>
+          <p><b>Numéros de série du fabricant</b> (facultatif) : certains objets portent un
+             numéro gravé. Le plus sûr est de les saisir après la création, <b>objet en main</b> :
+             « Éditer le lot → Saisir les numéros de série » affiche une ligne par marquage du club.
+             À la création, on peut aussi les coller un par ligne, dans l'ordre des marquages ;
+             l'aperçu montre la correspondance avant d'enregistrer. Le numéro figure sur la fiche
+             de vie, et la recherche le retrouve : utile quand un fabricant publie un rappel.</p>
+          <div class="encadre">Le contrôle d'unicité reste actif : un marquage déjà présent, ou
+             répété deux fois dans votre saisie, est refusé. Ces exemplaires apparaîtront dans la
+             liste « hors-préfixe » du diagnostic — c'est normal, ce n'est pas une erreur.</div>
+
+          <h4>Un lot regroupe des exemplaires en réalité pas tous du même achat ?</h4>
+          <p>Cas fréquent lors d'une reprise d'inventaire : plusieurs articles achetés à des
+             moments différents se retrouvent groupés dans un même lot, faute d'information au
+             moment de la saisie. Le bouton <b>« Scinder le lot »</b>, sur l'en-tête du lot,
+             détache les exemplaires cochés vers un <b>nouveau lot</b> ou un <b>lot existant de
+             la même catégorie</b> — sans jamais toucher à leur historique de contrôle, de prêt
+             ou de réparation, qui reste attaché à l'exemplaire lui-même, pas au lot.</p>
+          <div class="encadre">Créer un nouveau lot : la <b>désignation</b> est toujours à
+             saisir vous-même. Fabricant et modèle sont repris de l'origine (modifiables) ;
+             <b>date de fabrication, durée de vie et prix restent volontairement vides</b> —
+             précisément parce qu'on ne peut plus garantir qu'ils sont identiques pour ce
+             sous-groupe. Complétez-les si vous retrouvez la facture correspondante.</div>
+          <p>Un lot qui ne compte qu'un seul exemplaire (un achat isolé) se crée avec la case
+             <b>Exemplaire unique</b>. Il reste un lot : il s'affiche « exemplaire unique » dans la liste et
+             sur sa fiche, et vous pourrez lui ajouter des exemplaires plus tard.</p>
+        </section>
+
+        <section class="aide-sec" id="sec-marquage">
+          <h3>Cliquez un marquage</h3>
+          <p>Le <b>marquage</b> est l'identifiant inscrit sur l'objet (BAU-001, COR-014).
+             À l'écran, c'est la pastille bleue au début de chaque ligne.</p>
+          <p>Cliquez-la — dans n'importe quelle liste — pour ouvrir la <b>fiche de l'exemplaire</b> :
+             identité, statut, historique des contrôles, incidents et prêts, et les boutons
+             d'action adaptés à son état.</p>
+          <div class="encadre">Un baudrier rapporté abîmé se solde sans changer de rubrique :
+             on clique son marquage, on valide le retour, on déclare l'incident.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-prets">
+          <h3>Prêter et rendre</h3>
+
+          <h4>Prêter</h4>
+          <p>Un <b>prêt</b> (ou « bon d'emprunt ») regroupe le matériel sorti en une fois par une
+             même personne. Rubrique <b>Prêts</b>, bouton « + Nouveau prêt » : choisissez l'adhérent
+             et la date de retour prévue, cochez le matériel, enregistrez. Seul le matériel
+             disponible est proposé.</p>
+          <p>Si le parc est grand, la liste ne s'affiche pas en entier : choisissez une catégorie
+             ou un lot, ou tapez un marquage. <b>Le filtre ne fait que changer la vue</b> — ce que
+             vous avez déjà coché reste sélectionné, et un récapitulatif le rappelle sous la liste.</p>
+          <p>Le filtre <b>Lieu de stockage</b> (prêt, ajout à un bon, contrôle, entretien)
+             restreint les catégories et les lots proposés à ce qui se trouve dans ce lieu. Si ce
+             que vous cherchez est rangé ailleurs, une ligne sous la liste vous dit où, et
+             combien. Le champ <b>Rechercher</b> trouve un exemplaire par son marquage, le nom de
+             son lot, son modèle ou son fabricant.</p>
+          <p>Le menu <b>Lot</b> range les lots sous leur catégorie, avec le fabricant entre
+             parenthèses. Choisir un lot directement règle la catégorie toute seule ; revenir à
+             « Toutes » les catégories efface aussi le lot. C'est la même chose dans tous les
+             formulaires qui proposent ces filtres.</p>
+          <div class="encadre">Le prêt reçoit un <b>numéro</b> (2026-004). Cochez « Imprimer le
+             bon » et remettez-le à l'emprunteur : il le rapporte au retour, le numéro suffit à
+             retrouver le prêt.</div>
+
+          <h4>Rendre</h4>
+          <p>Les prêts en cours sont regroupés par bon, repliés. Cliquez un bon pour l'ouvrir —
+             les bons en retard s'ouvrent d'office et remontent en tête. Un champ filtre par
+             numéro, celui que l'emprunteur vous tend.</p>
+          <p>Le matériel revient intact neuf fois sur dix : un seul bouton, en bas du bon, dit
+             <b>« Tout rendre en bon état »</b> et solde tout d'un clic. Dès que vous choisissez
+             un état pour une ligne, il devient <b>« Valider la saisie »</b> et ne traite que ce
+             que vous avez renseigné. Choisir un état vaut déclaration de retour, il n'y a rien
+             d'autre à cocher.</p>
+          <div class="encadre"><b>Ce que l'état déclenche.</b> « Bon état » : l'exemplaire
+             redevient disponible. « Dégradé » : un incident est créé automatiquement, le matériel
+             passe en examen requis — un choix apparaît alors pour préciser tout de suite si un
+             simple contrôle suffira ou si une réparation est déjà envisagée
+             (<a class="aide-lien" data-sec="reparation">en savoir plus</a>). « Perdu » ou
+             « Volé » : il sort de l'inventaire, et un champ s'ouvre pour préciser les
+             circonstances de chacun.</div>
+
+          <h4>Les cas particuliers</h4>
+          <p><b>Un retour incomplet ?</b> Laissez les lignes non rendues sur « Non rendu » : le bon
+             reste ouvert avec un badge <b>« Partiel »</b> et un compteur « X/Y encore en cours ».
+             Les exemplaires rendus disparaissent de la liste, le bon ne se fait pas oublier.</p>
+          <p><b>Une erreur, un oubli ?</b> « Modifier le bon » change en une fois le responsable,
+             les dates ou la sortie, et permet d'ajouter du matériel oublié sous le même numéro.
+             Pour retirer un exemplaire, « Supprimer » sur sa ligne.</p>
+          <p><b>Pas de PC au local ?</b> Le bouton <b>Fiche d'emprunt vierge</b> imprime une fiche
+             à remplir au stylo (une pile à photocopier d'avance). L'emprunteur se sert, la remplit,
+             la rapporte — vous saisissez au retour. Elle porte aussi un encart incident.</p>
+          <p><b>Des demandes en ligne ?</b> Si le club a mis en place un formulaire de demande,
+             celles-ci apparaissent en haut de la rubrique. « Créer le bon » ouvre un prêt pré-rempli
+             où vous choisissez les exemplaires réels ; « Ignorer » classe la demande. Une demande
+             ne crée jamais un prêt toute seule.</p>
+
+          <p>Les <b>prêts terminés</b> s'empilent en dessous, repliés. Un badge signale d'emblée
+             les bons dont un exemplaire est revenu dégradé ou perdu.</p>
+                  <p><b>Retrouver un prêt.</b> Le champ « Rechercher un prêt », au-dessus des listes, cherche
+             dans les prêts en cours <b>et</b> terminés : tapez le nom d'une personne, un numéro de
+             bon, une sortie ou un marquage (accents et majuscules sans importance ; plusieurs mots se
+             cumulent, par exemple « guillaume falaise »). Un compteur indique combien de bons
+             correspondent. Dans <b>Matériel</b>, le champ Rechercher retrouve aussi un exemplaire par
+             le nom de la personne qui l'a empruntée en ce moment.</p>
+        </section>
+
+        <section class="aide-sec" id="sec-controles">
+          <h3>Contrôler les EPI</h3>
+          <p>La rubrique <b>Suivi des EPI</b> regroupe plusieurs sous-rubriques, dont <b>Contrôles</b> et <b>Incidents</b> : on passe de l'une à l'autre d'un clic, sans faire défiler. Chaque
+             libellé affiche son alerte — contrôles en retard, incidents en attente — pour rester
+             visible même depuis une autre sous-rubrique.</p>
+          <p>Chaque exemplaire doit être contrôlé au moins une fois par an par un adhérent
+             habilité. Cochez les exemplaires vérifiés, renseignez date, contrôleur et résultat,
+             validez : la traçabilité reste individuelle, le geste est unique.</p>
+          <p>Jusqu'à <b>quatre photos</b> peuvent documenter un contrôle — utile pour garder une
+             trace visuelle d'une usure ou d'un défaut relevé.
+             <a class="aide-lien" data-sec="photos">En savoir plus</a></p>
+          <p>Le résultat n'est pas toujours « Conforme » ou « Réforme » : un exemplaire
+             endommagé mais réparable peut être mis <b>« À réparer »</b>.
+             <a class="aide-lien" data-sec="reparation">En savoir plus</a></p>
+          <div class="encadre"><b>Anticiper la campagne.</b> Une carte <b>« Contrôles à prévoir
+             (60 j) »</b> sur la Vue d'ensemble — et dans le Suivi des EPI — signale les exemplaires dont
+             le contrôle annuel arrive à échéance dans les deux mois, <b>avant</b> qu'ils ne
+             basculent en retard. Un clic ouvre la liste, prête à cocher : de quoi planifier la
+             session de contrôle au lieu de la subir.</div>
+          <p>Par défaut, <b>chaque contrôle</b> — même isolé, suite à un incident ou après une
+             réparation — décale d'un an la prochaine échéance de l'exemplaire concerné, au risque
+             de fragmenter un lot contrôlé en une seule session. Un réglage dans <b>Réglages du
+             club → Fonctionnement</b> permet de ne faire compter que les contrôles de routine
+             pour ce calcul, en laissant les lots groupés.</p>
+          <div class="encadre">L'historique des contrôles et la liste des incidents sont
+             <b>regroupés par année</b> en volets repliants : l'année en cours est ouverte, les
+             précédentes repliées (avec leur nombre en en-tête), à déplier au besoin. L'historique
+             reste ainsi lisible d'année en année.</div>
+          <p>La <b>feuille de contrôle</b> s'imprime avec des colonnes vides : vous descendez au
+             local avec un stylo, puis vous saisissez au retour.</p>
+          <div class="encadre">Un contrôle en retard <b>alerte mais ne bloque pas</b> : le club est
+             bénévole, la décision de prêter reste humaine.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-incidents">
+          <h3>Déclarer un incident</h3>
+          <p>Un choc ou une chute retire l'exemplaire du circuit en attendant un examen.
+             La <b>suite à donner</b> classe l'incident : contrôle à réaliser, sans suite,
+             réparation à prévoir, ou mise au rebut immédiate.</p>
+          <p>Le mot est pris au sens large : un choc, une chute, mais aussi une usure repérée
+             sans qu'il se soit rien « passé ». Pour ce dernier cas précisément, le bouton
+             <b>« Déclarer une réparation »</b> ouvre son propre formulaire, débarrassé de tout
+             ce qui ne concerne pas une réparation. <a class="aide-lien" data-sec="reparation">En savoir plus</a></p>
+          <p>Un incident peut concerner <b>plusieurs exemplaires à la fois</b> — une chute de sac
+             qui abîme trois dégaines se déclare en une seule fois.</p>
+          <p>Jusqu'à <b>quatre photos</b> du dommage peuvent être jointes, sous plusieurs angles
+             si besoin. <a class="aide-lien" data-sec="photos">En savoir plus</a></p>
+          <p>Si l'objet est réparable plutôt qu'à réformer, la suite <b>« Réparation à
+             prévoir »</b> le retire du parc en attendant — il quitte aussitôt les incidents
+             en attente pour la liste « Clôturés », avec un badge <span class="badge repair">En
+             réparation</span> : ce n'est plus un contrôle qu'on attend, mais un retour d'atelier.
+             <a class="aide-lien" data-sec="reparation">En savoir plus</a></p>
+          <div class="encadre">Un retour de prêt en état « Dégradé » crée l'incident automatiquement :
+             rien à saisir deux fois.</div>
+          <p>Comme pour les contrôles, une <b>feuille de déclaration vierge</b> s'imprime :
+             celui qui constate le dommage la remplit au stylo sur place, le responsable saisit
+             au retour.</p>
+        </section>
+
+        <section class="aide-sec" id="sec-statuts">
+          <h3>Les statuts</h3>
+          <ul class="aide-list">
+            <li><span class="badge ok">En service</span> disponible au prêt</li>
+            <li><span class="badge info">Prêté</span> sorti, retour attendu</li>
+            <li><span class="badge warn">Examen requis</span> retiré du circuit, un examen physique est nécessaire avant toute réutilisation</li>
+            <li><span class="badge repair">En réparation</span> retiré du circuit, en attente d'une réparation déclarée puis d'un contrôle</li>
+            <li><span class="badge danger">Réformé</span> sorti définitivement de l'inventaire</li>
+            <li><span class="badge muted">Perdu</span> non retrouvé</li>
+            <li><span class="badge muted">Volé</span> disparu dans des circonstances de vol — distinct de
+               « Perdu », pour le suivi et les statistiques</li>
+            <li><span class="badge muted">Cédé</span> donné ou vendu à une autre structure</li>
+          </ul>
+          <p>Le statut ne se saisit jamais : il est <b>déduit</b> des faits enregistrés — prêt en
+             cours, dernier contrôle, incident, mise hors service.</p>
+          <div class="encadre">C'est ce qui garantit qu'un matériel réformé ne peut pas réapparaître
+             comme disponible. Pour changer un statut, on enregistre le fait correspondant :
+             un retour, un contrôle, une réforme.</div>
+          <p><b>Exemplaire retrouvé.</b> Un exemplaire déclaré <b>Perdu</b> ou <b>Volé</b> qui revient
+             au club se déclare avec le bouton <b>Déclarer retrouvé</b> (sur sa fiche, ou « Retrouvé » dans le
+             tableau du lot). Il repasse en <b>Examen requis</b> : un contrôle est obligatoire avant de le prêter
+             à nouveau, car on ne sait pas où ni comment il a été conservé. Un incident garde l'épisode dans sa
+             fiche de vie (dates de perte et de retour, commentaire de perte). Vider la sortie d'inventaire dans
+             « Éditer l'exemplaire » produit le même effet.</p>
+          <div class="encadre"><b>Une sortie d'inventaire s'explique toujours.</b> Que ce soit
+             directement sur l'exemplaire (Perdu / Volé / Réformé / Cédé), via un contrôle
+             (résultat « Réformé »), via un incident (« Mise au rebut immédiate »), ou lors
+             d'un retour de prêt marqué « Perdu » ou « Volé », le commentaire est exigé avant d'enregistrer —
+             usure constatée, rappel fabricant (avec la référence), décision du bureau,
+             circonstances de la perte ou du don. Cette règle s'applique partout, y compris
+             dans les actions groupées (plusieurs exemplaires à la fois) et les actions rapides
+             depuis la fiche : aucun raccourci ne la contourne. Cette explication apparaît
+             désormais directement à côté du statut, partout où il s'affiche — fiche de
+             l'exemplaire, tableau du lot, listes — pas seulement dans l'historique des
+             contrôles ou des incidents : elle ne reste jamais un mystère.</div>
+          <div class="encadre"><b>Réformer un exemplaire actuellement en prêt.</b> Si le matériel
+             qu'on réforme (par contrôle, incident, ou sortie manuelle) est encore en prêt, une case
+             à cocher — cochée par défaut — propose de clôturer ce prêt dans le même geste. Elle
+             cible précisément cet exemplaire : si plusieurs objets sont sortis ensemble sous le
+             même bon, les autres prêts restent intacts et continuent leur cours normal.</div>
+          <div class="encadre"><b>« À surveiller » aussi s'explique, sans y être obligé.</b> Un
+             indice apparaît pour suggérer ce qui vaut la peine d'être noté — une usure localisée,
+             une corrosion naissante — mais rien n'empêche d'enregistrer sans rien écrire, à la
+             différence d'une réforme. Une fois écrite, cette note suit l'exemplaire partout,
+             y compris dans l'écran « Historique des contrôles » (colonne Observations, alignée
+             sur ce qu'affichait déjà la fiche imprimable).</div>
+        </section>
+
+        <section class="aide-sec" id="sec-reparation">
+          <h3>Réparer un équipement</h3>
+          <p>Un contrôle ou un incident peuvent conclure <b>« À réparer »</b> plutôt que
+             « Réforme » : l'exemplaire est mis de côté, mais pas perdu pour autant. Il passe en
+             <span class="badge repair">En réparation</span>, sort du parc prêtable, et le motif
+             saisi reste attaché à sa fiche de vie.</p>
+
+          <p>Trois portes mènent au même résultat : un contrôle conclu « À réparer », un
+             incident dont la suite est « Réparation à prévoir », ou — le plus direct — le
+             bouton <b>« Déclarer une réparation »</b> sur la fiche de l'exemplaire (et en tête de la sous-rubrique <b>Réparations</b>), pour un besoin repéré hors contrôle. Ce bouton
+             ouvre son propre formulaire, sans gravité, sans suite à donner, sans photo — le
+             mot « incident » n'y apparaît nulle part, même si la même traçabilité
+             continue en arrière-plan. Même chose au <b>retour d'un prêt</b> rendu « Dégradé »,
+             qui propose directement le choix entre contrôle et réparation.
+             <a class="aide-lien" data-sec="prets">En savoir plus</a></p>
+
+          <p>Depuis la sous-rubrique Réparations, ce même bouton traite aussi plusieurs
+             exemplaires à la fois — filtrer par lot, cocher tout un lot arrivé en fin de vie
+             pour un changement de sangles, par exemple. Chaque exemplaire garde sa propre
+             ligne : rien n'est mutualisé.</p>
+
+          <p>Ce même bouton ouvre un choix : <b>« À prévoir »</b> (le comportement décrit
+             ci-dessus), ou <b>« Déjà effectuée »</b> — si la réparation est terminée au moment
+             de la déclaration, inutile de forcer un aller-retour par l'étape intermédiaire.
+             Le champ <b>Intervenant</b> reste une entité (club, atelier agréé, fabricant) ; si
+             c'est le club, un adhérent précis peut y être associé — utile pour la traçabilité,
+             sans se substituer à cette classification. Une case complémentaire, <b>« inspection
+             de sécurité réalisée lors de la réparation »</b>, va plus loin : l'exemplaire
+             repasse alors directement <span class="badge ok">En service</span>, sans attendre
+             de contrôle séparé — la réparation vaut aussi contrôle, à condition de le dire
+             explicitement.</p>
+
+          <p>Pour les cordes, sangles et cordelettes, une troisième option existe :
+             <b>« Découpée »</b>. Une catégorie marquée <a class="aide-lien" data-sec="listes">«
+             peut être découpé »</a> dans Listes du club la propose en plus des deux autres, ou
+             à sa place si la catégorie n'admet aucune réparation classique. Sélectionner
+             l'exemplaire ouvre une fenêtre dédiée : combien de morceaux en résultent, et pour
+             chacun — nouvel exemplaire ou mis au rebut. Un morceau devenu exemplaire reçoit sa
+             propre longueur, et hérite de la couleur et du lieu de stockage de l'origine
+             (modifiables si besoin) ; un morceau mis au rebut ne laisse qu'une trace dans le
+             commentaire, pas de fiche à lui. L'exemplaire d'origine se réforme automatiquement,
+             avec un résumé complet de l'opération ; chaque nouveau morceau garde un lien
+             visible vers son origine, sur sa propre fiche.</p>
+
+          <div class="encadre"><b>Sur un équipement de protection individuelle (EPI), ce choix
+             n'est pas toujours ouvert.</b> Un baudrier endommagé au point d'être retiré se
+             réforme, sauf si le fabricant prévoit explicitement une réparation — changer la
+             coiffe d'un casque, réaffûter des crampons. Une corde, elle, peut aussi être
+             découpée plutôt que réformée en entier si sa catégorie l'autorise, même sans
+             réparation classique possible — voir ci-dessus. Cette autorisation se donne une
+             fois pour toutes, par catégorie, dans <a class="aide-lien" data-sec="listes">Listes
+             du club</a>. Si ni l'une ni l'autre n'est ouverte pour ce qui est sélectionné, le
+             formulaire n'affiche même plus les choix devenus sans objet — seul l'avertissement
+             reste, sans jamais dire que la loi l'interdit : c'est la notice du fabricant qui
+             tranche.</div>
+
+          <p>Une catégorie ouverte peut aussi préciser <b>ce qui est généralement accepté</b> —
+             « sangles et coiffe, jamais le mousqueton » — dans un simple champ texte, affiché
+             directement au moment de choisir « À réparer ». Ce n'est pas une liste à cocher :
+             la réparabilité dépend souvent du dommage précis, pas seulement de la pièce.</p>
+
+          <p>Une fois l'exemplaire mis de côté, le suivi et la clôture se passent ailleurs.
+             <a class="aide-lien" data-sec="suivi-reparation">En savoir plus</a></p>
+        </section>
+
+        <section class="aide-sec" id="sec-suivi-reparation">
+          <h3>Suivre et clore une réparation</h3>
+          <p>Tout ce qui est actuellement en réparation se retrouve au même endroit : la sous-rubrique <b>Réparations</b>, dans Suivi des EPI. Chaque
+             ligne affiche depuis quand l'objet est de côté et pourquoi, avec un accès direct
+             pour clore la réparation sans repasser par sa fiche.</p>
+
+          <p>La carte <b>« En réparation »</b> de la Vue d'ensemble renvoie d'un clic à cette
+             liste — tout comme le badge <span class="badge repair">En réparation</span>
+             lui-même, partout où il apparaît dans la liste du matériel. Un bouton « Réparer »
+             à côté ouvre directement la fiche concernée.</p>
+
+          <p>Une fois l'objet réparé, le bouton <b>« Déclarer la réparation effectuée »</b>
+             apparaît sur sa fiche, à la place de « Contrôler ». Il demande une description —
+             obligatoire, c'est elle qui figurera sur la fiche de vie et dans le registre — ainsi
+             que la date et qui est intervenu : le club lui-même (avec, si la colonne existe, un
+             adhérent précis), un atelier agréé, ou le fabricant.</p>
+
+          <p>La même case <b>« inspection de sécurité réalisée »</b> qu'à la déclaration s'y
+             retrouve : cochée, l'exemplaire repasse directement <span class="badge ok">En
+             service</span> ; sinon, il attend son prochain contrôle, comme n'importe quelle
+             réparation clôturée sans elle.</p>
+
+          <p>Seuls les adhérents marqués <b>« Contrôleur EPI habilité »</b> dans
+             <a class="aide-lien" data-sec="listes">Listes du club</a> apparaissent comme
+             intervenant ou contrôleur, ici comme dans le formulaire de déclaration — une liste
+             plus pertinente, pas un droit qui bloquerait personne : sans adhérent encore
+             marqué, la liste complète reste proposée.</p>
+
+          <div class="encadre">Sans la case d'inspection cochée, cette déclaration ne suffit
+             pas à remettre l'exemplaire en service : il repasse en <span class="badge warn">Examen
+             requis</span> et attend un <b>contrôle complet</b>. Une réparation ne se substitue
+             jamais à un contrôle, sauf à le dire explicitement.</div>
+
+          <p>L'historique complet — mise en réparation, qui est intervenu, ce qui a été fait —
+             reste visible sur la <a class="aide-lien" data-sec="fiche">fiche de vie</a> de
+             l'exemplaire et dans le registre de son lot.</p>
+          <h4>Prolonger la durée de vie par une réparation</h4>
+          <p>Pour certains matériels, la pièce qui vieillit se remplace et le reste ne se périme
+             pas : la <b>sangle d'une dégaine</b>, par exemple, dont les mousquetons métalliques ne
+             vieillissent pas. Dans <b>Listes du club → Catégories</b>, cochez « Une réparation peut
+             prolonger la durée de vie » (sous « Maintenance prévue par le fabricant »).</p>
+          <p>Au moment de déclarer la réparation effectuée, indiquez alors la <b>date de fabrication
+             de la pièce neuve</b> (souvent marquée dessus) et sa durée de vie, pré-remplie avec celle
+             de la catégorie. La nouvelle fin de vie part de la pièce neuve, pas de l'ancienne date :
+             une sangle fabriquée en 2025 vit jusqu'au 31/12/2035, même posée en 2026. L'outil
+             l'affiche avant d'enregistrer.</p>
+          <p>Une dégaine arrivée en fin de vie garde le bouton « Déclarer une réparation
+             (prolonger) » : c'est justement en changeant la sangle qu'on la remet en circuit. Comme
+             toute réparation, elle passe ensuite par un contrôle. La fiche de vie indique d'où vient
+             la date (« prolongée le … par remplacement de : sangle ; initialement … »). Supprimer la
+             réparation rend l'ancienne date.</p>
+          <div class="encadre">Le remplacement se fait <b>selon la notice du fabricant</b>, avec une
+             pièce compatible : c'est la notice qui dit si la sangle d'une dégaine peut être changée,
+             pas l'outil.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-entretien">
+          <h3>Déclarer un entretien</h3>
+          <p>Un <b>entretien</b>, c'est un nettoyage, un lavage ou une désinfection du matériel,
+             réalisé selon la notice du fabricant : les casques après un stage, les cordes de
+             l'école d'escalade en fin de saison. La réglementation demande d'en garder la trace
+             sur la fiche de gestion de chaque équipement.</p>
+
+          <p>La sous-rubrique <b>Entretien</b>, dans Suivi des EPI, suit le
+             geste habituel : filtrez, cochez un ou plusieurs exemplaires, indiquez la date et
+             qui l'a fait, puis validez une fois. Le commentaire est facultatif ; utilisez-le pour
+             préciser ce qui a été fait quand c'est utile (« lavage à l'eau tiède »,
+             « désinfection après le stage jeunes »).</p>
+
+          <div class="encadre">Un entretien <b>ne remplace pas un contrôle</b> : il ne change ni
+             le statut du matériel, ni la date de son prochain contrôle. Un objet souillé de façon
+             inquiétante (sang, produit chimique) se déclare comme un
+             <a class="aide-lien" data-sec="incidents">incident</a>.</div>
+
+          <p>Chaque entretien apparaît sur la <a class="aide-lien" data-sec="fiche">fiche de
+             vie</a> de l'exemplaire et dans le registre de son lot. La sous-rubrique n'existe que si le club a créé la table <b>ENTRETIENS</b> (voir le Diagnostic) : sans elle, rien
+             ne change.</p>
+        </section>
+
+        <section class="aide-sec" id="sec-vetuste">
+          <h3>Fin de vie et alerte vétusté</h3>
+          <p>Le matériel <b>textile ou plastique</b> (cordes, sangles, baudriers, casques) a une
+             durée de vie limitée, en général dix ans. Le matériel <b>métallique</b> n'en a pas :
+             il se réforme sur constat de contrôle — laissez alors la durée de vie vide.</p>
+          <p>La fin de vie est fixée au <b>31 décembre</b> de l'année d'échéance, et l'alerte se
+             déclenche 90 jours avant.</p>
+          <div class="encadre">Elle ne peut donc s'allumer qu'à partir d'octobre : une carte
+             « Alertes vétusté » à zéro au printemps est normale, ce n'est pas une panne.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-cartes">
+          <h3>Les cartes sont des filtres</h3>
+          <p>Les grands chiffres en haut des rubriques ne sont pas décoratifs : <b>ils se cliquent</b>.</p>
+          <p><b>Suivi des EPI</b> : « En retard » et « Jamais contrôlés » font apparaître la liste du
+             matériel à vérifier — introuvable ailleurs, puisqu'il n'a pas encore de contrôle.
+             Côté Incidents, « En attente de contrôle » n'affiche que les incidents encore à traiter.</p>
+          <p><b>Vue d'ensemble</b> : « Alertes vétusté » ouvre l'inventaire filtré,
+             « Prêts en cours » bascule sur la rubrique Prêts.</p>
+          <p><b>Prêts</b> : « Retours en retard » isole les sorties non rentrées.</p>
+          <div class="encadre"><b>Le tableau « À traiter en priorité »</b> de la Vue d'ensemble se
+             clique aussi, ligne par ligne : chaque alerte (vétusté, contrôle en retard, jamais
+             contrôlé, retour en retard, incident en attente) mène directement à la liste ou à la rubrique concernée, prêts à traiter.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-fiche">
+          <h3>La fiche de vie</h3>
+          <p>C'est <b>le</b> document de l'outil, celui que la fédération attend et qu'on sort le
+             jour d'un accident ou d'un contrôle. Tout le reste — les prêts, les contrôles, les
+             incidents — existe pour la remplir.</p>
+          <div class="encadre">Un tableur dit ce qu'on possède aujourd'hui. Une fiche de vie
+             raconte tout ce qu'un objet a vécu depuis son achat. C'est cette différence qu'on
+             vous demandera de prouver.</div>
+
+          <h4>Ce qu'on y trouve</h4>
+          <p>Son identité (marquage, modèle, fabricant), ses dates (mise en service, fin de vie
+             prévue), d'où il vient (commande, prix), et surtout <b>son histoire complète</b> :
+             chaque contrôle avec son résultat, chaque incident avec ses photos, chaque prêt, et
+             chaque réparation — y compris une fois clôturée, avec qui est intervenu et ce qui a
+             été fait —, et chaque entretien. Elle indique aussi la notice du fabricant, la
+             périodicité des contrôles et la date du prochain. Rien ne s'efface : un exemplaire
+             réformé garde sa fiche.</p>
+
+          <h4>Comment la sortir</h4>
+          <p>Bouton <b>Fiche de vie</b> sur la fiche d'un exemplaire, pour un objet précis —
+             c'est celle qu'on présente quand un baudrier est en cause.</p>
+          <p>Bouton <b>Registre du lot</b> sur un lot, pour tous ses exemplaires d'un coup —
+             c'est celle qu'on présente lors d'un contrôle fédéral, où l'on vérifie un parc et
+             non un objet.</p>
+          <p>Dans la <b>fiche du lot</b> et l'<b>inventaire imprimable</b>, le tableau des
+             exemplaires ajoute de lui-même les colonnes <b>n° de série</b>, <b>couleur</b>,
+             <b>taille</b> (ou <b>longueur</b> pour les cordes et les sangles) et
+             <b>commentaire</b> dès qu'au moins un exemplaire du lot les renseigne ; un lot qui n'en
+             a aucun garde son tableau habituel. La fiche de vie d'un exemplaire, et donc le registre,
+             reprend aussi son commentaire.</p>
+          <p><b>Photos d'un exemplaire.</b> « Éditer l'exemplaire » permet d'ajouter jusqu'à quatre
+             photos (sur téléphone, l'appareil photo s'ouvre directement) et de les supprimer une à
+             une ; elles sont réduites automatiquement à l'envoi pour rester légères. On les retrouve
+             sur la fiche de l'exemplaire, dans sa fiche de vie (donc dans le registre et les fiches de
+             vie en PDF), et en vignettes dans la fiche du lot et l'inventaire imprimable. Dans
+             l'Excel et le CSV, seul le nombre de photos figure. Comme pour les autres photos, les
+             images se chargent depuis Grist à l'ouverture du document : imprimez ou enregistrez en
+             PDF tout de suite, sans conserver le fichier HTML.</p>
+          <div class="encadre">Les deux s'ouvrent dans un nouvel onglet, prêtes à imprimer ou à
+             enregistrer en PDF. Rien à installer.</div>
+
+          <h4>Le réflexe utile</h4>
+          <p>Avant une assemblée générale ou une visite fédérale, sortez le registre de vos lots
+             sensibles (cordes, baudriers, casques) : vous voyez d'un coup ce qui manque —
+             un contrôle oublié, une notice absente — pendant qu'il est encore temps.</p>
+
+          <p>Les autres sorties suivent simplement ce qui est affiché à l'écran : inventaire,
+             feuille de contrôle, registre des contrôles, export des commandes. Filtrez d'abord,
+             exportez ensuite.</p>
+        </section>
+
+        <section class="aide-sec" id="sec-listes">
+          <h3>Listes du club</h3>
+          <p>La rubrique <b>Listes du club</b> regroupe ce qui sert partout ailleurs : les catégories
+             de matériel, les lieux de stockage, les fournisseurs et les adhérents.</p>
+          <p>Tout s'y crée, s'y modifie et s'y supprime — plus besoin d'ouvrir les tables Grist.</p>
+          <p>Chaque catégorie porte sa <b>nature réglementaire</b> : EPI soumis ou non au
+             vieillissement, ou matériel non-EPI. Ce choix pilote la fin de vie
+             (<a class="aide-lien" data-sec="vetuste">en savoir plus</a>) et l'accès à la
+             réparation (<a class="aide-lien" data-sec="reparation">en savoir plus</a>) — à faire
+             une fois par catégorie, pas à chaque exemplaire.</p>
+          <div class="encadre">Une entrée encore utilisée (une catégorie portée par des lots, un
+             adhérent ayant des prêts) ne peut pas être supprimée : le widget indique par quoi
+             elle est retenue.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-bilan">
+          <h3>Bilan, budget et archivage</h3>
+          <p>En bas de la <b>Vue d'ensemble</b>, deux volets repliés : les <b>statistiques du club</b>
+             — taux de contrôle, rotation par catégorie, matériel jamais emprunté, dépenses par
+             financement — pour préparer l'assemblée générale, et le <b>remplissage</b> des tables
+             avec l'archivage des prêts anciens.</p>
+          <p>Après coup, la commande d'un lot se retrouve aussi dans <b>Matériel → Éditer le
+             lot</b>, encadré « Commande » : modifier la commande, joindre ou remplacer la facture,
+             ou créer la commande si le lot a été saisi sans. Si plusieurs lots partagent la même
+             commande, l'encadré le signale : la modifier la modifie pour tous.</p>
+          <p>La rubrique <b>Achats et budget</b> se filtre par année et par financement. Les totaux
+             suivent le filtre, et l'export CSV aussi.</p>
+          <div class="encadre">« Subvention 2026 » produit exactement le fichier à joindre au
+             dossier du financeur.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-sauvegarde">
+          <h3>Sauvegarder, transférer, exporter</h3>
+          <p>Tout est regroupé dans la rubrique <b>Import / export</b> du menu (sous « Plus » sur téléphone) :
+             <b>1.</b> reprendre un inventaire, <b>2.</b> exporter tout le parc, <b>3.</b> sauvegarder et restaurer. Les exports
+             liés à un écran (registre d'un lot, bon de prêt, contrôles, achats, liste filtrée du Matériel) restent à côté de ce qu'ils décrivent. Rappel : une <b>mise à jour du
+             logiciel ne touche jamais aux données</b>, elles restent dans les tables de Grist.</p>
+          <p><b>Export lisible</b> (rubrique <b>Import / export</b>, « Exporter tout le parc ») — un classeur Excel, un thème par feuille : inventaire avec statut et prochain contrôle, lots, commandes, contrôles, prêts,
+             incidents, réparations, entretien, listes du club. Des noms à la place des numéros
+             internes, des dates jj/mm/aaaa. Pour consulter, transmettre au bureau ou à un financeur.</p>
+          <p><b>Inventaire (CSV)</b> et <b>Inventaire imprimable</b> — au même endroit, pour tout le parc. Dans la rubrique <b>Matériel</b>, « Exporter la liste » et « Imprimer la liste » ne reprennent, eux, que les exemplaires affichés par les filtres.</p>
+          <p><b>Fiches de vie (PDF)</b> — au même endroit : une fenêtre permet de choisir les
+             catégories, le lieu et les exemplaires (en circulation, sortis du parc, ou <b>sortis
+             depuis plus de 3 ans</b>, dont la conservation réglementaire est échue). Une fiche par
+             page ; on imprime ou on « Enregistre en PDF » depuis la fenêtre qui s'ouvre.</p>
+          <p><b>Sauvegarde (.json)</b> — un fichier complet, à garder en lieu sûr. Il sert à
+             <b>transférer</b> les données vers un autre document EPILOG, par exemple une nouvelle
+             archive. Les photos, notices et factures n'y sont pas incluses : elles sont listées pour
+             être rattachées à la main.</p>
+          <p><b>Importer une sauvegarde</b> — uniquement dans un document <b>vide</b>, pour ne jamais
+             mélanger deux parcs. Un aperçu s'affiche avant toute écriture (nombre de lignes, colonnes
+             qui n'existent pas dans ce document). L'import se fait d'un bloc : en cas d'erreur, rien
+             n'est écrit.</p>
+          <p><b>Remettre à zéro</b> (zone repliée en bas de la rubrique) — deux choix : <b>tout effacer</b> (indispensable avant
+             d'importer une sauvegarde), ou effacer le matériel, l'historique et les commandes en
+             <b>gardant les listes du club</b>. Une sauvegarde est téléchargée d'office avant, puis on
+             confirme en tapant SUPPRIMER. Les réglages du club sont toujours conservés.</p>
+          <div class="encadre">Grist garde aussi son propre <b>historique des versions</b> et permet de
+             télécharger une copie complète du document (pièces jointes comprises) : c'est la
+             sauvegarde la plus complète.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-import">
+          <h3>Importer un inventaire existant</h3>
+          <p>Pour passer d'un tableur à EPILOG sans tout ressaisir : rubrique <b>Import / export</b> →
+             « 1. Reprendre un inventaire » (le bouton « Importer un inventaire… » de la rubrique Matériel y mène aussi). Téléchargez d'abord le <b>modèle</b> (un classeur Excel : mode
+             d'emploi, Inventaire, Catégories, Lots, Lieux de stockage, Contrôles, Listes), collez-y votre
+             inventaire — une ligne par exemplaire, en « collage spécial → valeurs » — puis importez-le.</p>
+          <p>Le modèle contient des <b>menus déroulants</b> (catégorie, lieu, lot, statut, résultat…) qui
+             regroupent ce qui est déjà dans EPILOG <b>et</b> ce que vous décrivez dans les autres feuilles :
+             une catégorie nouvellement décrite apparaît dans le menu de l'Inventaire. Les titres de colonnes
+             sont colorés selon l'importance (voir le mode d'emploi). Attention : un collage normal remplace
+             les menus des cellules collées ; utilisez « Collage spécial → Valeurs ». L'import contrôle de
+             toute façon chaque ligne.</p>
+          <p><b>Obligatoire</b> : le marquage (ou une quantité, EPILOG numérote alors lui-même) et la
+             catégorie ; pour le matériel soumis au vieillissement, la <b>date de fabrication</b> (ou
+             l'année), qui fonde la fin de vie. Fabricant, modèle, lieu et numéro de série sont fortement
+             recommandés ; tout le reste est facultatif.</p>
+          <p>Avant toute écriture, un <b>aperçu</b> chiffre ce qui sera créé, et un <b>rapport à imprimer</b>
+             (PDF) liste ce qui reste à faire à la main : numéros à étiqueter, données à compléter, photos
+             et factures non reprises… Au moindre doute — marquage en double, catégorie inconnue, date
+             illisible —, <b>rien n'est écrit</b> et l'erreur est localisée par feuille et numéro de ligne.
+             L'import ne fait qu'<b>ajouter</b> : il ne modifie jamais un exemplaire existant.</p>
+          <p>Les lots sont constitués automatiquement (même catégorie, fabricant, modèle et année de
+             fabrication). Un export complet d'EPILOG (Excel) peut lui-même être importé : les feuilles et
+             colonnes qui ne sont pas reprises sont simplement ignorées.</p>
+          <p><b>Modèle CSV.</b> Le bouton « Modèle CSV… » fournit un fichier aux <b>mêmes colonnes que
+             l'export CSV</b> du matériel (sans les colonnes calculées). Plus simple que le modèle Excel, mais
+             sans menus ni mode d'emploi : les <b>catégories doivent déjà exister</b> dans EPILOG, et un
+             tableur abîme volontiers les CSV (zéros initiaux, longs numéros de série, dates). Une fenêtre
+             rappelle ces limites avant le téléchargement. La ligne d'exemple doit être supprimée.</p>
+          <p><b>Dernier contrôle.</b> Si votre tableur note la date du dernier contrôle, mettez-la dans la
+             colonne « Dernier contrôle » (et le résultat dans « Résultat du dernier contrôle » ; « Conforme »
+             est supposé à défaut) : l'exemplaire n'arrive pas « sans contrôle » et son échéance est correcte.</p>
+          <p>L'aperçu <b>regroupe les erreurs identiques</b> (« catégorie inconnue — 80 lignes ») et signale les
+             <b>colonnes non reconnues</b>, qui seraient sinon ignorées en silence.</p>
+        </section>
+
+        <section class="aide-sec" id="sec-structure">
+          <h3>Mise à jour et structure du document</h3>
+          <p>Le code d'EPILOG se met à jour en recollant <b>les deux fichiers</b> (le .js et le .html)
+             dans Grist. À chaque mise à jour, EPILOG compare la <b>structure du document</b> (ses
+             tables et leurs colonnes) à celle qu'il attend, et <b>crée lui-même les éléments
+             nouveaux</b> : par exemple la colonne « photo » des exemplaires. Rien d'existant n'est
+             jamais modifié ni supprimé : il ne fait qu'ajouter.</p>
+          <p>Les modules facultatifs plus anciens (Réparations, Entretien, Demandes) que vous n'avez pas
+             créés restent absents. <b>Réglages → Fonctionnement → Structure du document</b> les liste
+             et permet de les créer d'un clic ; le Diagnostic donne le même état.</p>
+          <p>Dans un <b>document vide</b>, un bandeau propose « Installer la structure d'EPILOG » : les
+             tables sont créées vides, il ne reste qu'à renseigner les listes du club.</p>
+          <div class="encadre">Créer des tables demande le droit de <b>modifier la structure</b> du
+             document. Sans ce droit, un bandeau l'indique, l'outil continue de fonctionner, et un
+             propriétaire du document n'a qu'à ouvrir EPILOG une fois pour compléter la structure.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-miseajour">
+          <h3>Mettre à jour EPILOG</h3>
+          <p>EPILOG est un « widget » dont le code <b>vit dans chaque document Grist</b>. Une nouvelle
+             version, ce sont <b>deux fichiers</b> : <b>widget_pilotage.html</b> et
+             <b>widget_pilotage.js</b>. Mettre à jour le code ne touche <b>jamais</b> à vos données (les
+             tables Grist). Le numéro de la version qui tourne s'affiche dans le pied de page
+             (« EPILOG v… ») : comparez-le à celui annoncé.</p>
+          <p><b>Avant toute mise à jour</b>, téléchargez une sauvegarde (rubrique Import / export →
+             Sauvegarder et restaurer) et <b>gardez les deux fichiers de l'ancienne version</b> : en cas de
+             problème, il suffit de les recoller.</p>
+
+          <h4>Méthode 1 — remplacer le code dans le document (recommandée)</h4>
+          <ol>
+            <li>Récupérez les deux fichiers de la nouvelle version.</li>
+            <li>Dans Grist, ouvrez la page qui contient EPILOG, sélectionnez le widget et ouvrez ses
+                options (panneau de droite) pour accéder à l'éditeur du widget, le
+                « Custom widget builder » : une zone pour le <b>HTML</b>, une pour le <b>JavaScript</b>.</li>
+            <li>Dans la zone HTML, tout sélectionner puis coller le contenu de <b>widget_pilotage.html</b> ;
+                dans la zone JavaScript, faire de même avec <b>widget_pilotage.js</b>. Remplacez
+                <b>les deux</b> : si un seul l'est, l'aide et le code ne se correspondent plus.</li>
+            <li>Validez, puis rechargez la page du navigateur.</li>
+            <li>Vérifiez le numéro de version dans le pied de page. S'il n'a pas changé, rechargez à
+                nouveau, ou contrôlez que les deux zones ont bien été remplacées.</li>
+          </ol>
+          <p>Si la nouvelle version a besoin de tables ou de colonnes supplémentaires, EPILOG les crée
+             lui-même au premier chargement et l'indique par un message (voir « Structure du
+             document »). Tout est conservé : données, pièces jointes, partage, adresse du document,
+             favoris, historique des versions de Grist.</p>
+
+          <h4>Méthode 2 — repartir d'un document neuf, avec une sauvegarde</h4>
+          <p>À réserver aux cas particuliers : changer de site Grist, repartir d'un document vide, ou
+             lorsque la méthode 1 n'est pas possible.</p>
+          <ol>
+            <li>Dans l'ancien document : rubrique Import / export → Sauvegarder et restaurer → <b>télécharger
+                la sauvegarde (.json)</b>. Conservez ce fichier.</li>
+            <li>Créez un <b>nouveau document Grist vide</b>, ajoutez-y un widget personnalisé
+                (« Custom widget builder ») avec le HTML et le JavaScript de la nouvelle version, comme
+                dans la méthode 1, en lui donnant l'<b>accès complet au document</b>.</li>
+            <li>Ouvrez EPILOG dans ce document : le bandeau <b>« Installer la structure d'EPILOG »</b>
+                crée les tables vides.</li>
+            <li>rubrique Import / export → Sauvegarder et restaurer → <b>Importer une sauvegarde</b> : choisissez
+                le fichier .json, vérifiez l'aperçu, importez.</li>
+          </ol>
+          <div class="encadre"><b>Attention, cette méthode a un coût :</b>
+            <ul style="margin:6px 0 0 18px">
+              <li><b>L'adresse du document change.</b> Les favoris, le lien « ?style=singlePage » et
+                  tous les liens déjà donnés aux bénévoles sont à refaire.</li>
+              <li><b>Le partage est à refaire :</b> le nouveau document n'hérite pas des droits d'accès ;
+                  réinvitez chaque personne avec le bon niveau.</li>
+              <li><b>Les pièces jointes ne sont pas dans la sauvegarde</b> : photos, notices et factures
+                  sont à rattacher à la main (le fichier .json les liste). Pour tout conserver, il vaut
+                  mieux la méthode 1.</li>
+              <li>L'historique des versions de Grist n'est pas repris.</li>
+              <li>Gardez l'ancien document jusqu'à avoir tout vérifié dans le nouveau.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="aide-sec" id="sec-photos">
+          <h3>Photos et documents</h3>
+          <p>Une photo de dommage vaut dix lignes de description le jour où il faut justifier
+             une réforme. C'est la principale raison d'en joindre.</p>
+
+          <h4>Joindre une photo</h4>
+          <p>Au moment d'enregistrer un <b>contrôle</b> ou un <b>incident</b>, un champ permet
+             d'ajouter <b>jusqu'à quatre photos</b> — plusieurs angles d'un même dommage, ou
+             l'évolution d'une usure. On peut aussi en ajouter après coup, par
+             « Modifier le contrôle » ou « Modifier l'incident ».</p>
+          <p>Chaque vignette porte une croix pour la retirer, avec confirmation. Au-delà de
+             quatre, le bouton d'ajout laisse place à « 4 photos max. ».</p>
+
+          <h4>Photo du modèle</h4>
+          <p>Une image par lot, que tous ses exemplaires affichent : pratique pour reconnaître
+             un matériel qu'on ne connaît pas de nom. Elle s'ajoute par
+             <b>« Compléter ce lot »</b>, dans « Modifier le lot ».</p>
+          <div class="encadre">C'est la photo <b>du modèle</b>, pas celle de chaque exemplaire :
+             la couleur ou la finition peuvent différer. Une mention le rappelle partout où elle
+             est montrée à côté d'un objet précis.</div>
+
+          <h4>Notice et facture</h4>
+          <p>Le registre attendu par la fédération ne se limite pas aux fiches de vie : il inclut
+             la <b>notice du fabricant</b> et la <b>facture</b>. La notice se joint au lot
+             (« Compléter ce lot »), la facture à la commande (bouton <b>« Facture + »</b> sur sa
+             ligne, dans Achats et budget).</p>
+          <p>Un lien « Notice » ou « Facture » apparaît ensuite sur la fiche de l'exemplaire et
+             dans le lot déplié ; un clic ouvre le PDF. Le
+             <a class="aide-lien" data-sec="fiche">registre du lot</a> indique si chaque pièce
+             est bien présente.</p>
+
+          <div class="encadre">Si un bouton d'ajout reste sans effet, c'est en général une
+             question de droits ou de colonne manquante : le
+             <a class="aide-lien" data-sec="diagnostic">diagnostic</a> le dit en une ligne.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-supprimer">
+          <h3>Supprimer ou réformer ?</h3>
+          <p><b>Réformer</b> sort le matériel de l'inventaire en conservant son historique.
+             C'est ce qu'il faut faire dans la quasi-totalité des cas.</p>
+          <p><b>Supprimer</b> efface la ligne et tout ce qui s'y rattache — contrôles compris.
+             À réserver aux erreurs de saisie.</p>
+          <div class="encadre">Le widget annonce toujours ce qui va disparaître avant d'agir,
+             et demande d'écrire SUPPRIMER pour confirmer.</div>
+          <div class="encadre"><b>Un lot entièrement hors service se range tout seul.</b> Tant qu'un
+             lot garde au moins un exemplaire en stock, il reste dans la liste active — voir ses
+             exemplaires se réformer un à un aide à décider (rachat, réforme en bloc). Mais dès que
+             <b>tous</b> ses exemplaires sont réformés ou perdus, le lot descend dans un volet
+             repliable <b>« Lots entièrement hors service »</b> en bas de la rubrique Matériel :
+             conservé et consultable, mais rangé pour ne pas encombrer.</div>
+        </section>
+
+        <section class="aide-sec" id="sec-diagnostic">
+          <h3>En cas de doute : le diagnostic</h3>
+          <p>Il vérifie les tables et colonnes présentes, signale les colonnes de référence restées
+             en Texte, indique les valeurs de personnalisation appliquées et si la colonne photo
+             est détectée.</p>
+          <div class="encadre"><b>Régler la personnalisation.</b> Dans ce menu d'aide, la rubrique
+             <b>Réglages du club</b> (tout en bas, « Aller plus loin ») ouvre le panneau où l'on
+             modifie le titre, le nom du club, la fédération, les couleurs et des <b>liens utiles</b>
+             (règles de la fédération, norme — ils s'affichent dans « À propos ») — sans toucher à la
+             table CONFIG dans Grist. Les changements s'appliquent aussitôt. Placer ce réglage ici,
+             plutôt que dans le bandeau, évite les modifications par mégarde. Si la table CONFIG
+             n'existe pas encore, le panneau l'indique et renvoie au classeur pour la créer.</div>
+          <div class="encadre"><b>Où trouver les liens de votre fédération ?</b> Pour ne pas partir
+             de zéro :
+             <ul class="aide-list">
+               <li><b>FFCAM</b> — la « Recommandation fédérale pour la gestion du matériel EPI »,
+                   souvent hébergée sur le site de votre comité ou d'un club affilié.</li>
+               <li><b>FFME</b> — la page <b>ffme.fr/epi</b>.</li>
+               <li><b>Norme commune aux deux</b> — <b>NF&nbsp;S&nbsp;72-701</b> (AFNOR), le standard
+                   sur lequel reposent les règles des deux fédérations.</li>
+             </ul>
+             Copiez l'adresse qui vous concerne dans <b>Réglages du club → Liens utiles</b> ; elle
+             s'affichera dans « À propos ». Ces liens ne sont pas figés dans l'outil, volontairement :
+             si une adresse change un jour, vous la corrigez ici en quelques secondes — un lien
+             gravé dans le code, lui, resterait cassé.</div>
+          <div class="encadre">C'est le premier réflexe quand un compteur reste à zéro ou qu'un
+             écran ne réagit pas comme prévu. Si l'affichage ne change pas après une mise à jour du
+             code, c'est généralement que l'ancienne version est encore en place : il faut
+             l'effacer entièrement avant de coller la nouvelle.</div>
+          <div class="encadre"><b>Un champ attendu n'apparaît pas ?</b> Certaines finesses
+             reposent sur des colonnes facultatives, à créer une fois pour toutes dans Grist :
+             <b>couleur</b> et <b>taille</b> des exemplaires, <b>préfixe</b> de marquage sur les
+             catégories, <b>photos</b>, <b>notice</b> et <b>facture</b>. Le diagnostic dit
+             lesquelles il trouve. En leur absence, l'outil fonctionne — on saisit simplement à la
+             main ce qu'il aurait rempli tout seul.</div>
+          <div class="encadre"><b>Les pièces jointes ne s'ajoutent pas ?</b> Deux causes, dans
+             cet ordre. <b>La colonne manque</b> : voir ci-dessus. <b>Les droits</b> : déposer
+             depuis l'application demande un accès en écriture au document. Si les règles d'accès
+             du club sont restrictives, glisser le fichier directement dans la cellule Grist reste
+             la voie sûre, et le widget l'affiche ensuite normalement.</div>
+          <button type="button" class="secondary" id="btnDiag">Lancer un diagnostic</button>
+          <pre id="diagSortie"></pre>
+        </section>
+
+        <section class="aide-sec" id="sec-apropos">
+          <h3>À propos</h3>
+          <div class="apropos-box">
+            <div class="apropos-logo">
+              <svg class="logo-complet" viewBox="0 0 600 600" width="250" height="250"
+                   xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo EPILOG">
+                <rect class="lc-bg" width="600" height="600" rx="36"/>
+                <path class="lc-shield" d="M 300 50 L 470 105 V 290 C 470 415 300 505 300 505 C 300 505 130 415 130 290 V 105 Z"/>
+                <path class="lc-carabiner" d="M 235 115 C 345 95, 410 142, 410 225 L 410 355 C 410 438, 325 475, 245 465 C 180 456, 160 410, 160 355 L 160 225 C 160 160, 180 125, 235 115 Z"/>
+                <rect class="lc-gate" x="397" y="225" width="26" height="130" rx="7"/>
+                <rect class="lc-lock" x="390" y="270" width="40" height="44" rx="8"/>
+                <line class="lc-ridge" x1="395" y1="281" x2="425" y2="281"/>
+                <line class="lc-ridge" x1="395" y1="292" x2="425" y2="292"/>
+                <line class="lc-ridge" x1="395" y1="303" x2="425" y2="303"/>
+                <circle class="lc-pin" cx="410" cy="202" r="6"/>
+                <circle class="lc-pin" cx="410" cy="385" r="6"/>
+                <polygon class="lc-mountain" points="180,410 280,270 325,325 370,250 400,410"/>
+                <polygon class="lc-facet" points="280,270 307,307 293,307 370,250 343,325"/>
+                <rect class="lc-trunk" x="289" y="380" width="22" height="40" rx="3"/>
+                <polygon class="lc-tier-4" points="300,390 210,390 257,335 233,335 300,270 367,335 343,335 390,390"/>
+                <polygon class="lc-tier-3" points="300,335 230,335 267,288 248,288 300,223 352,288 333,288 370,335"/>
+                <polygon class="lc-tier-2" points="300,280 248,280 277,242 263,242 300,185 337,242 323,242 352,280"/>
+                <polygon class="lc-tier-1" points="300,215 267,215 300,140 333,215"/>
+                <polygon class="lc-highlight" points="300,140 300,215 333,215"/>
+                <polygon class="lc-highlight" points="300,185 300,242 337,242"/>
+                <polygon class="lc-highlight" points="300,223 300,288 352,288"/>
+                <polygon class="lc-highlight" points="300,270 300,335 367,335"/>
+                <text class="lc-titre" x="300" y="525" text-anchor="middle">EPI<tspan class="lc-titre-accent">LOG</tspan></text>
+                <text class="lc-sous" x="300" y="555" text-anchor="middle">GESTION MATÉRIEL MONTAGNE</text>
+              </svg>
+            </div>
+            <div class="apropos-corps">
+              <div class="apropos-rubrique">Logiciel</div>
+              <div class="apropos-soft">EPI<span>LOG</span></div>
+              <div class="apropos-soft-desc">Logiciel de gestion des EPI pour clubs alpins et de montagne</div>
+              <div class="apropos-filet"></div>
+              <div class="apropos-rubrique">Développement</div>
+              <div class="apropos-nom">Pierre Travers</div>
+              <div class="apropos-desc">Gestion du matériel et suivi EPI — Mon club — 2026</div>
+              <div id="aproposReferences" hidden>
+                <div class="apropos-filet"></div>
+                <div class="apropos-rubrique">Références</div>
+                <div class="apropos-liens" id="aproposLiens"></div>
+              </div>
+              <div class="apropos-filet"></div>
+              <div class="apropos-rubrique">Licence</div>
+              <div class="apropos-licence">
+                <span class="cc-repli">EUPL 1.2</span>
+                <div>
+                  <b>Logiciel libre — EUPL 1.2</b><br>
+                  EPILOG est distribué sous la
+                  <a href="https://interoperable-europe.ec.europa.eu/sites/default/files/custom-page/attachment/eupl_v1.2_fr.pdf" target="_blank" rel="noopener">licence
+                  publique de l'Union européenne (EUPL) v1.2</a>, dont le texte français a valeur officielle.
+                  Vous pouvez l'utiliser, le copier, le modifier et le redistribuer, à condition de conserver les
+                  mentions d'auteur et de diffuser toute version modifiée sous la même licence, avec son code.
+                  La documentation est sous licence
+                  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+                </div>
+              </div>
+            </div>
+            <div class="apropos-pied">
+              <span>✉ <a href="mailto:pierre.travers@gmail.com">pierre.travers@gmail.com</a></span>
+              <span>2026</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ CONTENU ════════════════════ -->
+<div class="disposition">
+  <aside id="navLaterale" aria-label="Navigation">
+    <button type="button" id="nlReplier" class="nl-replier" aria-expanded="true" aria-controls="navLaterale" title="Réduire le menu"><svg class="nl-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg><span class="nl-lib">Réduire le menu</span></button>
+    <button type="button" class="nl-item" data-nav="apercu" title="Vue d'ensemble"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg><span class="nl-lib">Vue d'ensemble</span></button>
+    <button type="button" class="nl-item" data-nav="materiel" title="Matériel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"></path><path d="M3 8v8l9 5 9-5V8"></path></svg><span class="nl-lib">Matériel</span></button>
+    <button type="button" class="nl-item" data-nav="prets" title="Prêts"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h11l-3-3"></path><path d="M17 17H6l3 3"></path></svg><span class="nl-lib">Prêts</span><span class="nl-compte" data-compte="prets"></span></button>
+    <div class="nl-groupe"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M9 12l2 2 4-4"></path></svg><span class="nl-lib">Suivi des EPI</span></div>
+    <button type="button" class="nl-item nl-court" data-nav="controles" title="Suivi des EPI"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M9 12l2 2 4-4"></path></svg><span class="nl-lib">Suivi des EPI</span></button>
+    <button type="button" class="nl-sous" data-nav="controles:controles">Contrôles<span class="nl-alerte" data-miroir="epiCompteCtrl"></span></button>
+    <button type="button" class="nl-sous" data-nav="controles:incidents">Incidents<span class="nl-alerte" data-miroir="epiCompteInc"></span></button>
+    <button type="button" class="nl-sous" data-nav="controles:reparations">Réparations<span class="nl-alerte" data-miroir="epiCompteRep"></span></button>
+    <button type="button" class="nl-sous" data-nav="controles:entretiens" hidden>Entretien</button>
+    <button type="button" class="nl-item" data-nav="budget" title="Achats et budget"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"></rect><path d="M2 10h20"></path></svg><span class="nl-lib">Achats et budget</span></button>
+    <div class="nl-separateur"></div>
+    <div class="nl-titre">Listes du club</div>
+    <button type="button" class="nl-item nl-court" data-nav="refs" title="Listes du club"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"></path><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg><span class="nl-lib">Listes du club</span></button>
+    <button type="button" class="nl-sous" data-nav="refs:categories">Catégories<span class="nl-compte" data-miroir="refsCompteCategories"></span></button>
+    <button type="button" class="nl-sous" data-nav="refs:lieux">Lieux de stockage<span class="nl-compte" data-miroir="refsCompteLieux"></span></button>
+    <button type="button" class="nl-sous" data-nav="refs:fournisseurs">Fournisseurs<span class="nl-compte" data-miroir="refsCompteFournisseurs"></span></button>
+    <button type="button" class="nl-sous" data-nav="refs:adherents">Adhérents<span class="nl-compte" data-miroir="refsCompteAdherents"></span></button>
+    <div class="nl-separateur"></div>
+    <button type="button" class="nl-item" data-nav="donnees" title="Import / export"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M8 7l4-4 4 4"></path><path d="M5 13v6h14v-6"></path></svg><span class="nl-lib">Import / export</span></button>
+  </aside>
+  <main class="content">
+  <div id="pane-apercu" class="pane active">Chargement…</div>
+
+  <div id="pane-materiel" class="pane">
+    <div id="materiel-actions"></div>
+    <div id="materiel-editor"></div>
+    <div id="materiel-list"></div>
+  </div>
+
+  <div id="pane-prets" class="pane">
+    <div id="prets-actions"></div>
+    <div id="prets-editor"></div>
+    <div id="prets-list"></div>
+  </div>
+
+  <div id="pane-controles" class="pane">
+    <div class="sous-onglets" id="epi-so">
+      <button type="button" class="sous-onglet actif" data-se="controles">Contrôles<span class="so-compte" id="epiCompteCtrl"></span></button>
+      <button type="button" class="sous-onglet" data-se="incidents">Incidents<span class="so-compte" id="epiCompteInc"></span></button>
+      <button type="button" class="sous-onglet" data-se="reparations">Réparations<span class="so-compte" id="epiCompteRep"></span></button>
+      <button type="button" class="sous-onglet" data-se="entretiens" hidden>Entretien</button>
+    </div>
+    <div id="epi-controles">
+      <div id="controles-actions"></div>
+      <div id="controles-editor"></div>
+      <div id="controles-list"></div>
+    </div>
+    <div id="epi-incidents" hidden>
+      <div id="incidents-actions"></div>
+      <div id="incidents-editor"></div>
+      <div id="incidents-list"></div>
+    </div>
+    <div id="epi-reparations" hidden>
+      <div id="reparations-list"></div>
+    </div>
+    <div id="epi-entretiens" hidden>
+      <div id="entretiens-list"></div>
+    </div>
+  </div>
+
+  <div id="pane-budget" class="pane">
+    <div id="budget-actions"></div>
+    <div id="budget-editor"></div>
+    <div id="budget-list"></div>
+  </div>
+
+  <div id="pane-refs" class="pane">
+    <p class="hint" style="margin:0 0 12px">Les listes de base du club : catégories, lieux, fournisseurs, adhérents.
+      Tout se gère ici — plus besoin d'ouvrir les tables Grist.</p>
+    <div><span id="refsFlash" class="form-msg"></span></div>
+    <div class="sous-onglets" id="refs-so">
+      <button type="button" class="sous-onglet actif" data-se="categories">Catégories<span class="so-compte" id="refsCompteCategories"></span></button>
+      <button type="button" class="sous-onglet" data-se="lieux">Lieux de stockage<span class="so-compte" id="refsCompteLieux"></span></button>
+      <button type="button" class="sous-onglet" data-se="fournisseurs">Fournisseurs<span class="so-compte" id="refsCompteFournisseurs"></span></button>
+      <button type="button" class="sous-onglet" data-se="adherents">Adhérents<span class="so-compte" id="refsCompteAdherents"></span></button>
+    </div>
+    <div id="refs-editor"></div>
+    <div id="refs-list"></div>
+  </div>
+
+  <div id="pane-donnees" class="pane"></div>
+
+  <div id="pane-plus" class="pane">
+    <div class="plus-bloc">
+      <button type="button" class="plus-lien" data-nav="budget"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"></rect><path d="M2 10h20"></path></svg><span>Achats et budget</span><span class="plus-fleche" aria-hidden="true">›</span></button>
+      <button type="button" class="plus-lien" data-nav="apercu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg><span>Vue d'ensemble et statistiques</span><span class="plus-fleche" aria-hidden="true">›</span></button>
+    </div>
+    <div class="plus-titre">Listes du club</div>
+    <div class="plus-bloc">
+      <button type="button" class="plus-lien" data-nav="refs:categories"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"></path><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg><span>Catégories</span><span class="plus-fleche" aria-hidden="true">›</span></button><button type="button" class="plus-lien" data-nav="refs:lieux"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"></path><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg><span>Lieux de stockage</span><span class="plus-fleche" aria-hidden="true">›</span></button><button type="button" class="plus-lien" data-nav="refs:fournisseurs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"></path><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg><span>Fournisseurs</span><span class="plus-fleche" aria-hidden="true">›</span></button><button type="button" class="plus-lien" data-nav="refs:adherents"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"></path><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg><span>Adhérents</span><span class="plus-fleche" aria-hidden="true">›</span></button>
+    </div>
+    <div class="plus-bloc">
+      <button type="button" class="plus-lien" data-nav="donnees"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M8 7l4-4 4 4"></path><path d="M5 13v6h14v-6"></path></svg><span>Import / export</span><span class="plus-fleche" aria-hidden="true">›</span></button>
+    </div>
+    <div class="plus-bloc">
+      <button type="button" class="plus-lien" data-plus="reglages"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg><span>Réglages du club</span><span class="plus-fleche" aria-hidden="true">›</span></button>
+      <button type="button" class="plus-lien" data-plus="aide"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"></path><path d="M12 17h.01"></path></svg><span>Aide</span><span class="plus-fleche" aria-hidden="true">›</span></button>
+    </div>
+  </div>
+</main>
+</div>
+<nav id="navBas" aria-label="Navigation principale">
+  <button type="button" data-nav="apercu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg><span>Accueil</span></button>
+  <button type="button" data-nav="materiel"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"></path><path d="M3 8v8l9 5 9-5V8"></path></svg><span>Matériel</span></button>
+  <button type="button" data-nav="prets"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h11l-3-3"></path><path d="M17 17H6l3 3"></path></svg><span>Prêts</span></button>
+  <button type="button" data-nav="controles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M9 12l2 2 4-4"></path></svg><span>Suivi EPI</span></button>
+  <button type="button" data-nav="plus"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg><span>Plus</span></button>
+</nav>
+
+<!-- ════════════════════ CRÉDITS ════════════════════ -->
+<footer class="credits">
+  <div class="credits-inner">
+    <span class="credits-mark" aria-hidden="true"></span>
+    <span class="credits-soft">EPI<span>LOG</span></span>
+    <span class="credits-version" id="creditsVersion"></span>
+    <span class="credits-baseline">Gestion des EPI et du matériel de montagne</span>
+    <span class="sep">·</span>
+    <span><b>Mon club</b></span>
+    <span id="creditsLiens"></span>
+    <span class="sep">·</span>
+    <button type="button" class="credits-apropos" id="btnApropos">À propos</button>
+  </div>
+</footer>
+
+<style>
+  /* ============================================================
+     VARIABLES — Charte FFCAM / Club Alpin Français d'Auxerre
+     ============================================================ */
+  :root {
+    --navy:       #1B3668;
+    --navy-mid:   #234082;
+    --navy-dark:  #132750;
+    --red:        #E30613;
+    --red-hover:  #B8050F;
+    --ice:        #EEF2F8;
+    --ice-border: #D0D9EC;
+    --ice-hover:  #E2E9F5;
+    --pill-bg:    #DDE5F4;
+    --pill-fg:    #1B3668;
+    --text-main:  #0F1E3D;
+    --text-mid:   #435070;
+    --text-light: #7A8CAB;
+    --white:      #FFFFFF;
+    --zebra:      #F7F9FD;
+
+    --ok-bg:     #DCEFE2;  --ok-fg:     #12603A;
+    --warn-bg:   #FBEBD2;  --warn-fg:   #8A5A00;
+    --danger-bg: #FBE0E2;  --danger-fg: #A3050E;
+    --info-bg:   #DDE5F4;  --info-fg:   #1B3668;
+    --muted-bg:  #E6EAF1;  --muted-fg:  #5C6880;
+    /* Statut "En reparation" : ni alerte a traiter (warn = ambre), ni sortie
+       definitive (danger = rouge). Orange soutenu, volontairement plus fonce
+       que warn pour ne pas etre confondu avec "Examen requis" en un coup d'oeil. */
+    --repair-bg: #FCE4CC;  --repair-fg: #9A4B00;
+
+    /* ---- Palette du logo EPILOG ----
+       Ces variables etaient jusqu'ici de simples valeurs de repli inscrites
+       dans chaque `var(x, #hex)`. Les declarer ici les rend reellement
+       modifiables : changer une ligne repeint le logo partout ou il apparait
+       (en-tete, aide, encart « A propos »).
+       Elles sont volontairement SEPAREES de la charte du club ci-dessus :
+       un club personnalise --navy et --red, pas l'identite du logiciel.
+       Les documents imprimables, eux, sont autonomes et portent leurs
+       couleurs en dur (voir CSS_FICHE et enveloppeAidePrint). */
+    --logo-bg:            #0F172A;   /* fond arrondi du logo            */
+    --logo-shield:        #1E293B;   /* bouclier                        */
+    --logo-shield-stroke: #334155;   /* liseré du bouclier              */
+    --carabiner-color:    #0EA5E9;   /* corps du mousqueton             */
+    --carabiner-gate:     #E2E8F0;   /* doigt                           */
+    --carabiner-lock:     #F97316;   /* bague de verrouillage           */
+    --spruce-trunk:       #78350F;   /* tronc                           */
+    --spruce-dark:        #047857;   /* épicéa, étage bas               */
+    --spruce-mid:         #10B981;   /* épicéa, étage médian            */
+    --spruce-light:       #34D399;   /* épicéa, étage haut              */
+    --spruce-top:         #6EE7B7;   /* épicéa, cime                    */
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--ice);
+    color: var(--text-main);
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ============================================================
+     EN-TÊTE
+     ============================================================ */
+  .header {
+    background: linear-gradient(160deg, var(--navy-dark) 0%, var(--navy) 55%, var(--navy-mid) 100%);
+    color: var(--white);
+    padding: 0 20px;
+    position: relative;
+    overflow: hidden;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-mountain { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; pointer-events: none; }
+
+  .header-inner {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 16px;
+    width: 100%; padding: 15px 0;
+  }
+
+  .header-emblem {
+    width: 46px; height: 46px;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--white);
+  }
+
+  .header-titles h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.03em; line-height: 1.25; margin: 0; }
+  .header-titles .subtitle {
+    font-size: 11px; opacity: 0.65; margin: 3px 0 0;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .header-titles .red-rule {
+    display: block; width: 28px; height: 2px;
+    background: var(--red); margin-top: 6px; border-radius: 2px;
+  }
+
+  /* Nom du logiciel : discret, sous le filet rouge, non paramétrable */
+  .header-soft {
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    font-weight: 700; opacity: 0.5; margin: 5px 0 0;
+  }
+  .header-soft span { color: var(--spruce-light, #34D399); opacity: 0.95; }
+
+  /* Logo EPILOG (mousqueton + épicéa) — couleurs pilotables par variables */
+  .logo-epilog .logo-carabiner {
+    fill: none; stroke: var(--carabiner-color, currentColor);
+    stroke-width: 30px; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .logo-epilog .logo-gate { fill: var(--carabiner-gate, currentColor); opacity: 0.9; }
+  .logo-epilog .logo-lock { fill: var(--carabiner-lock, #F97316); }
+  .logo-epilog .logo-trunk { fill: var(--spruce-trunk, #78350F); }
+  .logo-epilog .logo-tier-4 { fill: var(--spruce-dark, #047857); }
+  .logo-epilog .logo-tier-3 { fill: var(--spruce-mid, #10B981); }
+  .logo-epilog .logo-tier-2 { fill: var(--spruce-light, #34D399); }
+  .logo-epilog .logo-tier-1 { fill: var(--spruce-top, #6EE7B7); }
+
+  .header-actions {
+    display: flex; align-items: center; gap: 8px;
+    margin-left: auto;   /* repris de .header-recherche, supprimee en 2026.5.5 */
+  }
+  .header-help {
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.22);
+    color: var(--white);
+    width: 30px; height: 30px; padding: 0;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: background 0.18s;
+  }
+  .header-help:hover { background: rgba(255,255,255,0.26); }
+  .header-help.actif { background: var(--red); border-color: var(--red); }
+
+  /* ============================================================
+     BANNIÈRE D'ERREUR
+     ============================================================ */
+    .erreur-globale { background: var(--danger-bg); border-bottom: 2px solid var(--red); }
+  .erreur-inner { padding: 12px 20px; display: flex; align-items: flex-start; gap: 12px; }
+  .erreur-titre {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--red); white-space: nowrap; padding-top: 3px;
+  }
+  #erreurTexte {
+    flex: 1; margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px; line-height: 1.5; color: var(--danger-fg);
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 130px; overflow: auto;
+  }
+  .erreur-inner button { flex-shrink: 0; }
+
+  /* ============================================================
+     ONGLETS
+     ============================================================ */
+  .tabs-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--ice-border);
+    box-shadow: 0 2px 10px rgba(27,54,104,0.08);
+    padding: 0 20px;
+  }
+  .tabs { display: flex; flex-wrap: wrap; }
+  .tab {
+    padding: 12px 14px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .tab:hover { color: var(--navy); }
+  .tab.active { color: var(--navy); border-bottom-color: var(--red); }
+
+  /* ============================================================
+     BARRE D'ACTIONS ET FILTRES
+     ============================================================ */
+  .barre-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+
+  .filtres {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;
+    background: var(--white);
+    border: 1px solid var(--ice-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .filtre-champ { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; }
+  .filtre-champ > label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-light);
+  }
+  .filtre-case {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-mid); white-space: nowrap;
+    height: 35px; text-transform: none; letter-spacing: 0; font-weight: 400;
+  }
+
+  .repli { margin-top: 10px; }
+  .repli > summary {
+    cursor: pointer; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--navy); padding: 6px 0; user-select: none;
+  }
+  .repli > summary:hover { color: var(--red); }
+  .repli[open] > summary { margin-bottom: 8px; }
+
+  /* ============================================================
+     AIDE
+     ============================================================ */
+  /* ---- Aide : fenetre modale en surimpression + menu lateral ---- */
+  .aide {
+    position: fixed; inset: 0; z-index: 60;
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+  }
+  .aide[hidden] { display: none; }
+  .aide-fond { position: absolute; inset: 0; background: rgba(15, 28, 54, 0.55); }
+  .aide-modale {
+    position: relative; display: flex; flex-direction: column;
+    width: min(1140px, 96vw); height: min(920px, 94vh);
+    background: var(--white); border-radius: 12px; overflow: hidden;
+    box-shadow: 0 18px 50px rgba(15, 28, 54, 0.35);
+  }
+  .aide-head {
+    display: flex; align-items: center; gap: 9px; flex: 0 0 auto;
+    background: var(--navy); color: #fff; padding: 12px 16px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+.aide-pdf { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.15);
+    border: none; color: #fff; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 6px;
+    cursor: pointer; margin-left: auto; }
+  .aide-pdf:hover { background: rgba(255,255,255,0.3); }
+  .aide-close {
+    background: none; border: none; cursor: pointer;
+    color: #fff; opacity: 0.75; display: flex; padding: 4px;
+  }
+  .aide-close:hover { opacity: 1; }
+
+  .aide-corps { display: flex; flex: 1 1 auto; min-height: 0; }
+
+  .aide-nav {
+    flex: 0 0 214px; width: 214px; overflow-y: auto; padding: 6px 0 14px;
+    background: var(--ice); border-right: 1px solid var(--ice-border);
+  }
+  .aide-nav-groupe {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-light); padding: 13px 14px 5px;
+  }
+  .aide-nav-item {
+    display: flex; align-items: center; gap: 9px; width: 100%;
+    background: none; border: none; border-left: 3px solid transparent;
+    padding: 8px 14px; font-family: inherit; font-size: 12.5px; text-align: left;
+    color: var(--text-mid); cursor: pointer; line-height: 1.3; white-space: normal;
+  }
+  .aide-nav-item svg { flex: 0 0 auto; opacity: 0.7; }
+  .aide-nav-label { min-width: 0; flex: 1 1 auto; overflow-wrap: break-word; }
+  .aide-nav-item:hover { background: #E3EAF6; color: var(--navy); }
+  .aide-nav-item.actif {
+    background: var(--white); color: var(--navy); font-weight: 600;
+    border-left-color: var(--red);
+  }
+  .aide-nav-item.actif svg { opacity: 1; }
+
+  .aide-sections { flex: 1 1 auto; min-width: 0; overflow-y: auto; padding: 22px 26px 26px; }
+  .aide-sec { display: none; max-width: 820px; margin: 0 auto; }
+  .aide-sec.actif { display: block; }
+
+  /* Bandeau d'identite en tete de « Bienvenue » : plante le decor en une ligne,
+     sans repousser le contenu utile plus bas que necessaire. */
+  .aide-hero {
+    display: flex; align-items: center; gap: 18px;
+    padding: 18px 20px; margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+    border-radius: 10px;
+  }
+  .aide-hero-logo {
+    flex: 0 0 62px; width: 62px; height: 62px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--logo-bg); border-radius: 12px; padding: 7px;
+  }
+  .aide-hero-logo .logo-complet { width: 100%; height: 100%; }
+  .aide-hero-texte { min-width: 0; }
+  .aide-hero-nom {
+    font-size: 25px; font-weight: 800; letter-spacing: 0.1em;
+    color: #FFFFFF; line-height: 1.05;
+  }
+  .aide-hero-nom span { color: var(--spruce-light); }
+  .aide-hero-baseline {
+    font-size: 12.5px; color: rgba(255,255,255,0.82); margin-top: 4px;
+  }
+  .aide-hero-club {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.11em;
+    text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 7px;
+  }
+  #sec-bienvenue h3 { margin-top: 16px; }
+  .aide-sec h3 {
+    font-size: 16px; font-weight: 700; color: var(--navy); margin: 0 0 4px;
+  }
+  .aide-sec h3::after {
+    content: ""; display: block; width: 28px; height: 2px;
+    background: var(--red); margin: 7px 0 13px; border-radius: 2px;
+  }
+  .aide-sec p { font-size: 13px; line-height: 1.62; color: var(--text-mid); margin: 0 0 10px; }
+  .aide-sec h4 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--navy); margin: 18px 0 8px;
+  }
+  .aide-lien {
+    color: var(--navy); font-weight: 600; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+  .aide-lien:hover { color: var(--red); }
+  .aide-nav-item.principale { font-weight: 600; margin-bottom: 2px; }
+  /* Callout generique : deja reutilise hors de l'aide (formulaires JS, avec
+     un style inline qui redefinit ce que la regle ci-dessous couvre
+     desormais nativement). Garder les deux : le style inline continue de
+     s'appliquer sans casse (specificite egale, ordre de cascade inchange),
+     et les nouveaux appels peuvent s'en passer. */
+  .encadre {
+    background: var(--ice); border-left: 3px solid var(--navy);
+    border-radius: 0 6px 6px 0; padding: 11px 14px; margin: 14px 0;
+    font-size: 12.5px; line-height: 1.6; color: var(--text-mid);
+  }
+  /* Variante pour un encadre qui bloque une action (categorie EPI fermee a la
+     reparation) plutot que d'informer : bordure ambree au lieu de navy, sans
+     aller jusqu'au rouge "danger" qui signalerait une erreur de saisie. */
+  .encadre-warn {
+    background: var(--warn-bg); border-left: 5px solid var(--warn-fg);
+    border-radius: 0 6px 6px 0; padding: 12px 15px; margin: 10px 0;
+    font-size: 13px; line-height: 1.6; color: var(--text-mid);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .encadre-warn b { color: var(--warn-fg); }
+  /* Pendant positif : confirme explicitement qu'une reparation est possible,
+     plutot que de laisser l'absence de mise en garde faire office de reponse.
+     Une case a cocher masquee sans rien pour la remplacer avait justement
+     ete lue comme "la reparation n'est pas prevue ici", alors que c'est
+     l'inverse pour tout materiel non-EPI. */
+  .encadre-ok {
+    background: var(--ok-bg); border-left: 5px solid var(--ok-fg);
+    border-radius: 0 6px 6px 0; padding: 12px 15px; margin: 10px 0;
+    font-size: 13px; line-height: 1.6; color: var(--text-mid);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .encadre-ok b { color: var(--ok-fg); }
+  .aide-sec pre { margin-top: 12px; }
+  .aide-list { list-style: none; margin: 0 0 12px; padding: 0; }
+  .aide-list li {
+    font-size: 12.5px; color: var(--text-mid);
+    display: flex; align-items: center; gap: 7px; margin-bottom: 6px;
+  }
+
+  /* ============================================================
+     CONTENU
+     ============================================================ */
+  .content { padding: 18px 20px 24px; }
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  /* ============================================================
+     CARTES D'INDICATEURS
+     ============================================================ */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 12px; margin-bottom: 16px;
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--ice-border);
+    border-radius: 8px;
+    padding: 13px 15px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--navy);
+  }
+  .card .label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-light); margin: 0 0 5px;
+  }
+  .card .value { font-size: 23px; font-weight: 700; color: var(--navy); margin: 0; line-height: 1.1; }
+  .card .card-sous { font-size: 11px; color: var(--text-light); margin: 4px 0 0; }
+
+  /* ============================================================
+     TABLEAUX
+     ============================================================ */
+  table { width: 100%; border-collapse: collapse; background: var(--white); }
+  thead tr { background: var(--navy); box-shadow: 0 3px 0 0 var(--red); }
+  th {
+    padding: 10px 12px; text-align: left;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+  }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--ice-border); vertical-align: top; }
+  tbody tr, table tr { background: var(--white); transition: background 0.12s; }
+  table tr:nth-child(even) { background: var(--zebra); }
+  table tr:hover { background: var(--ice-hover); }
+  thead tr:hover { background: var(--navy); }
+  table tr:first-child:hover { background: var(--navy); }
+  table tr:first-child { background: var(--navy); }
+  table tr:first-child td {
+    color: rgba(255,255,255,0.85);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.09em; text-transform: uppercase;
+    border-bottom: 3px solid var(--red);
+  }
+
+  /* Badge de référence (marquage) */
+  .badge-ref {
+    display: inline-flex; align-items: center;
+    background: var(--navy); color: var(--white);
+    border-radius: 5px; padding: 3px 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+  }
+
+  /* ============================================================
+     PASTILLES D'ÉTAT
+     ============================================================ */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .ok     { background: var(--ok-bg);     color: var(--ok-fg); }
+  .warn   { background: var(--warn-bg);   color: var(--warn-fg); }
+  .danger { background: var(--danger-bg); color: var(--danger-fg); }
+  .info   { background: var(--info-bg);   color: var(--info-fg); }
+  .muted  { background: var(--muted-bg);  color: var(--muted-fg); }
+  .repair { background: var(--repair-bg); color: var(--repair-fg); }
+
+  /* ============================================================
+     BOUTONS
+     ============================================================ */
+  button {
+    white-space: nowrap;
+    background: var(--navy); color: var(--white); border: none;
+    padding: 8px 15px; border-radius: 6px;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s;
+    font-family: inherit;
+  }
+  button:hover  { background: var(--navy-dark); }
+  button:active { transform: scale(0.97); }
+
+  button.secondary {
+    background: var(--white); color: var(--navy);
+    border: 1.5px solid var(--ice-border);
+    padding: 5px 10px; font-size: 11px;
+  }
+  button.secondary:hover { background: var(--ice-hover); border-color: var(--navy); }
+
+  button.danger {
+    background: var(--white); color: var(--red);
+    border: 1.5px solid #EFC5C8;
+    padding: 5px 10px; font-size: 11px;
+  }
+  button.danger:hover { background: var(--danger-bg); border-color: var(--red); }
+
+  button.danger-plein { background: var(--red); color: var(--white); border: none; }
+  button.danger-plein:hover { background: var(--red-hover); }
+
+  /* ============================================================
+     CHAMPS
+     ============================================================ */
+  input[type=text], input[type=date], input[type=number], select, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1.5px solid var(--ice-border);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-main);
+    background: var(--white);
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(27,54,104,0.12);
+  }
+  input[type=checkbox] { width: auto; }
+
+  /* ============================================================
+     FORMULAIRES
+     ============================================================ */
+  .form-panel {
+    margin-top: 12px;
+    margin-bottom: 24px;
+    padding: 16px 18px;
+    background: linear-gradient(90deg, rgba(27,54,104,0.08) 0%, rgba(27,54,104,0.02) 25%, rgba(255,255,255,0) 50%);
+    border: 1px solid var(--ice-border);
+    border-left: 5px solid var(--navy);
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(27,54,104,0.08);
+    position: relative;
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-field label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-light);
+    display: block; margin-bottom: 4px;
+  }
+  .form-section { margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--ice-border); }
+  .form-section h4 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--navy); margin: 0 0 10px;
+  }
+  .quick-add {
+    margin-top: 6px; padding: 10px;
+    background: var(--ice);
+    border: 1px dashed var(--ice-border);
+    border-radius: 6px;
+    display: none;
+  }
+  .quick-add.open { display: block; }
+  .quick-add .form-grid { gap: 8px; margin-bottom: 8px; }
+  .form-actions { margin-top: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .form-msg { font-size: 12px; font-weight: 600; }
+  .hint { font-size: 12px; color: var(--text-light); line-height: 1.5; margin: 0 0 8px; }
+
+  /* ============================================================
+     LOTS (accordéon)
+     ============================================================ */
+  .lot {
+    background: var(--white);
+    border: 1px solid var(--ice-border);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+  .lot:hover { box-shadow: 0 2px 10px rgba(27,54,104,0.08); }
+  .lot.open { border-left: 3px solid var(--red); }
+
+  .lot-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    background: var(--white);
+    cursor: pointer; flex-wrap: wrap;
+  }
+  .lot-head:hover { background: var(--zebra); }
+  .lot-caret { color: var(--text-light); font-size: 10px; width: 10px; display: inline-block; transition: transform 0.14s; }
+  .lot.open .lot-caret { transform: rotate(90deg); color: var(--red); }
+  .lot-title { font-weight: 700; font-size: 13px; color: var(--navy); }
+  .lot-meta { font-size: 11.5px; color: var(--text-light); }
+  .lot-counts { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-basis: 100%; justify-content: flex-end; }
+  .lot-body { display: none; padding: 0 14px 12px; }
+  .lot.open .lot-body { display: block; }
+  .lot-body table { border: 1px solid var(--ice-border); border-radius: 6px; overflow: hidden; }
+
+  .raison { font-size: 11px; color: var(--text-light); margin-top: 3px; line-height: 1.35; }
+  /* Le repli du detail d'un controle groupe : display:flex NE DOIT JAMAIS etre en style
+     inline sur le meme element que [hidden], sinon le style en ligne l'emporte sur la
+     regle par defaut du navigateur qui masque [hidden] -- le repli resterait toujours
+     ouvert. Cette classe gere explicitement les deux etats. */
+  .ctrl-grp-detail { display: none; margin-top: 6px; flex-wrap: wrap; gap: 5px 6px; }
+  .ctrl-grp-detail:not([hidden]) { display: flex; }
+  /* Dans le tableau du lot, un apercu de 2 lignes suffit — la remarque complete reste
+     consultable d'un clic (Editer, Fiche de vie). Uniquement ici : la fiche rapide et la
+     fiche imprimable gardent le texte entier, deja des vues de detail. Le max-width est
+     necessaire : sans largeur bornee, une cellule de tableau s'auto-dimensionne et
+     -webkit-line-clamp ne sait pas ou couper. */
+  #materiel-list .raison {
+    max-width: 480px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  /* Le flex est porte par un div INTERNE, jamais par le <td> lui-meme : un td en
+     display:flex sort du calcul de mise en page du tableau, ne s'etire plus a la
+     hauteur de sa rangee, et son trait de separation se dessine alors a une hauteur
+     differente de celle des autres colonnes. Cellule normale + div flex = les
+     separateurs traversent toute la rangee d'un seul trait. */
+  .td-actions > div { display: flex; gap: 6px; align-items: flex-start; }
+
+  /* Sous-onglets (voir #refs-so) plutot qu'un empilement de 4 blocs : un
+     seul bloc rendu a la fois par renderRefs(), donc plus de grille ni de
+     titre repete en <h3> (le libelle du sous-onglet fait deja ce travail —
+     meme principe que le panneau Controles/Incidents). */
+  .refs-bloc {
+    background: var(--white); border: 1px solid var(--ice-border);
+    border-top: 3px solid var(--navy); border-radius: 8px; padding: 13px 15px;
+    overflow-x: auto;
+  }
+  .refs-bloc table { min-width: 100%; }
+  .refs-bloc td:last-child { white-space: nowrap; width: 1%; }
+  .refs-bloc td:last-child button { flex-shrink: 0; }
+  .refs-bloc table td, .refs-bloc table th { padding: 7px 9px; font-size: 12.5px; }
+  /* la liste defile, l'en-tete du bloc (titre + Ajouter) reste fixe.
+     Plafond releve (420 -> 460px) : pleine largeur, un bloc qui a beaucoup
+     d'entrees (ex. Adherents) peut se permettre d'en montrer un peu plus
+     avant de defiler. */
+  .refs-scroll { max-height: 460px; overflow-y: auto; }
+  /* fenetre defilante generique : listes longues sans deformation de page */
+.onboarding { background: #eef6f0; border: 1px solid #bfe0cb; border-left: 4px solid #1A6B34;
+    border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
+  .onboarding-titre { font-weight: 700; color: #12603A; font-size: 13.5px; margin-bottom: 4px; }
+  .onboarding p { color: var(--text-main); font-size: 13px; margin: 0; line-height: 1.5; }
+  .donnees-titre { margin: 0 0 8px; font-size: 15px; color: var(--navy, #1B3668); }
+  .onboarding-sous { color: var(--text-mid) !important; font-size: 12px !important; margin-bottom: 8px !important; }
+  .checklist { list-style: none; margin: 6px 0 0; padding: 0; }
+  .checklist li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-mid); padding: 3px 0; }
+  .checklist li.fait { color: #12603A; }
+  .checklist .check { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px;
+    border-radius: 4px; border: 1.5px solid #bfe0cb; background: #fff; color: #1A6B34; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+  .checklist li.fait .check { background: #1A6B34; border-color: #1A6B34; color: #fff; }
+  .reglages { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; }
+  .reglages[hidden] { display: none; }
+  .reglages-fond { position: absolute; inset: 0; background: rgba(15,30,61,0.45); }
+  .reglages-modale { position: relative; background: #fff; width: min(760px, 94vw); max-height: 90vh;
+    border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; overflow: hidden; }
+  .reglages-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--navy);
+    color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+  .reglages-head span { flex: 1; }
+  .reglages-close { background: none; border: none; cursor: pointer; color: #fff; opacity: 0.75;
+    display: flex; padding: 4px; }
+  .reglages-close:hover { opacity: 1; }
+  .reglages-corps { padding: 16px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+  .reglages-intro { color: var(--text-mid); font-size: 12.5px; margin: 0 0 12px; }
+  .reglages-groupe { color: var(--navy); font-size: 13px; margin: 14px 0 8px; text-transform: uppercase; letter-spacing: .04em; }
+  .reglages-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .reglages-grille .form-field { margin: 0; }
+  .reglages-couleur { display: flex; align-items: center; gap: 8px; }
+  .reglages-couleur input { flex: 1; }
+  .couleur-pick { width: 34px; height: 34px; padding: 0; border: 1px solid var(--ice-border); border-radius: 6px;
+    cursor: pointer; background: none; flex-shrink: 0; }
+  .couleur-swatch { width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--ice-border); flex-shrink: 0;
+    background-image: linear-gradient(45deg,#eee 25%,transparent 25%,transparent 75%,#eee 75%),linear-gradient(45deg,#eee 25%,transparent 25%,transparent 75%,#eee 75%);
+    background-size: 10px 10px; background-position: 0 0,5px 5px; }
+  .form-aide { color: var(--text-light); font-size: 11.5px; margin: 3px 0 0; }
+  .reglages-pied { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--ice-border); background: #fafcff; flex-shrink: 0; }
+  @media (max-width: 560px) { .reglages-grille { grid-template-columns: 1fr; } .reglages-modale { border-radius: 0; height: 100%; max-height: 100vh; } }
+  .btn-pj { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--navy);
+    background: #eef2f8; border: 1px solid var(--ice-border); border-radius: 6px; padding: 4px 9px; cursor: pointer; white-space: nowrap; }
+  .btn-pj:hover { background: #e2e9f5; }
+  .btn-pj.pj-encours { opacity: 0.5; pointer-events: none; }
+  .btn-pj.btn-pj-existe { background: #fff8e6; border-color: #e8cf6a; }
+  .btn-pj.btn-pj-existe:hover { background: #fbeec0; }
+  .demandes-bloc { background: #fff8e6; border: 1px solid #f0d97a; border-radius: 9px; padding: 10px 14px 14px; margin: 0 0 18px; }
+  .demande { background: #fff; border: 1px solid var(--ice-border); border-radius: 8px; padding: 10px 12px; margin: 8px 0 0; }
+  .demande-tete { color: var(--navy); font-size: 13.5px; }
+  .demande-meta { color: var(--text-mid); font-weight: 400; }
+  .demande-besoin { margin: 4px 0 8px; color: var(--text-main); font-size: 13px; }
+  .demande-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .demande-note { background: #fff8e6; border: 1px solid #f0d97a; border-radius: 6px; padding: 8px 10px; margin: 0 0 12px; font-size: 13px; color: var(--text-main); }
+  .demande-note-alerte { color: var(--red); font-weight: 600; }
+  .volet-annee { border: 1px solid var(--ice-border); border-radius: 8px; margin: 0 0 8px; overflow: hidden; }
+  .volet-tete { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--ice); cursor: pointer; }
+  .volet-tete:hover { background: #e3eaf6; }
+  .volet-chevron { color: var(--text-light); transition: transform .15s; display: inline-block; }
+  .volet-annee.ouvert .volet-chevron { transform: rotate(90deg); }
+  .volet-titre { font-weight: 700; color: var(--navy); font-size: 13.5px; }
+  .volet-corps { display: none; }
+  .volet-annee.ouvert .volet-corps { display: block; }
+  .volet-corps .scroll-y { max-height: none; border: none; border-radius: 0; }
+  .volet-corps .scroll-y th { position: static; }
+  /* Meme raisonnement que ci-dessus, applique au deuxieme cas d'accordeon
+     ouvrable du widget : un bon de pret plafonnait son tableau a 320px
+     (.scroll-y general) MEME une fois ouvert, alors qu'il est invisible tant
+     qu'il ne l'est pas (.bon-corps { display:none }). Le plafond ne servait
+     donc plus a rien apres ouverture, sauf a emboiter un ascenseur interne
+     dans le defilement normal de la page — genant en particulier quand on
+     revele le sous-panneau "reparation" sur un retour degrade, qui peut se
+     retrouver pousse hors de la zone visible de cette petite boite. Sans
+     lui, la page s'allonge et defile normalement, un seul niveau. */
+  .bon-corps .scroll-y { max-height: none; border: none; border-radius: 0; }
+  .bon-corps .scroll-y th { position: static; }
+  .sous-onglets { display: flex; gap: 2px; margin: 0 0 18px; border-bottom: 2px solid var(--ice-border); }
+  .sous-onglet { background: none; border: none; padding: 9px 18px; font-size: 14px; font-weight: 600;
+    color: var(--text-mid); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+    border-radius: 0; }
+  .sous-onglet:hover { color: var(--navy); background: none; }
+  .sous-onglet.actif { color: var(--navy); border-bottom-color: var(--red); }
+  .so-compte { margin-left: 6px; font-size: 12px; font-weight: 700; color: var(--red); }
+  .so-compte:empty { display: none; }
+  .scroll-y { max-height: 320px; overflow-y: auto; border: 1px solid var(--ice-border); border-radius: 8px; }
+  .scroll-y table { margin: 0; }
+  .scroll-y th { position: sticky; top: 0; background: var(--navy); z-index: 1; }
+  .titre-compte { color: var(--text-light); font-weight: 400; letter-spacing: 0; }
+
+  /* cartes-filtres : un chiffre passif devient un point d'entree */
+  #pane-apercu tr.alerte-clic { cursor: pointer; }
+  #pane-apercu tr.alerte-clic:hover td { background: #EEF2F8; }
+  .card-clic { cursor: pointer; transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s; border: 1px solid transparent; position: relative; }
+  .card-clic::after { content: '\203A'; position: absolute; top: 6px; right: 11px; color: var(--navy); opacity: 0.32; font-size: 20px; line-height: 1; font-weight: 700; }
+  .card-clic:hover::after { opacity: 0.6; }
+  .card-clic:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(27,54,104,0.14); }
+  .card-clic.actif { border-color: var(--navy); box-shadow: 0 3px 10px rgba(27,54,104,0.18); }
+  .card-clic.card-alerte .value { color: var(--red); }
+  .card-clic.card-alerte.actif { border-color: var(--red); }
+  .card-clic .card-sous { font-size: 10px; color: var(--text-light); margin: 3px 0 0; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* statistiques */
+  .stat-entete { display: flex; align-items: center; gap: 12px; margin: 12px 0; font-size: 13px; color: var(--text-mid); }
+  .stat-chiffre { font-size: 26px; font-weight: 700; color: var(--navy); }
+  .stat-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .stat-bloc { background: var(--white); border: 1px solid var(--ice-border); border-radius: 8px; padding: 13px 15px; overflow-x: auto; }
+  .stat-bloc h4 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--navy); margin: 0 0 10px;
+  }
+  .stat-bloc h4::after {
+    content: ""; display: block; width: 22px; height: 2px;
+    background: var(--red); margin-top: 4px; border-radius: 2px;
+  }
+  .stat-bloc table { margin: 0; width: 100%; }
+  .stat-bloc th.num, .stat-bloc td.num { text-align: right; white-space: nowrap; }
+  /* Petits tableaux sans en-tete (ex. Pertes et vols) : la regle globale "1ere ligne
+     = en-tete" (table tr:first-child) ne s'applique pas ici, sa ligne est une donnee
+     comme les autres. */
+  .tbl-sans-entete tr:first-child,
+  .tbl-sans-entete tr:first-child:hover { background: transparent; }
+  .tbl-sans-entete tr:first-child td {
+    color: var(--text-main); font-size: inherit; font-weight: 400;
+    text-transform: none; letter-spacing: normal;
+  }
+  .stat-bloc th, .stat-bloc td { padding: 6px 8px; }
+  .stat-puces { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  /* remplissage */
+  .rempl-tableau { display: flex; flex-direction: column; gap: 9px; margin: 12px 0; }
+  .rempl-ligne { display: flex; align-items: center; gap: 12px; font-size: 12.5px; }
+  .rempl-nom { flex: 0 0 150px; color: var(--text-mid); }
+  .rempl-jauge { flex: 1; height: 9px; background: var(--ice); border-radius: 5px; overflow: hidden; }
+  .rempl-fill { display: block; height: 100%; background: var(--navy); border-radius: 5px; }
+  .rempl-fill.chaud { background: var(--red); }
+  .rempl-chiffre { flex: 0 0 auto; color: var(--text-light); font-variant-numeric: tabular-nums; }
+  .refs-scroll th { position: sticky; top: 0; background: var(--navy); z-index: 1; }
+
+  .section-titre {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--navy); margin: 0 0 12px;
+  }
+  .section-titre::after {
+    content: ""; display: block; width: 26px; height: 2px;
+    background: var(--red); margin-top: 5px; border-radius: 2px;
+  }
+
+  .grille-coches {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 6px; max-height: 220px; overflow-y: auto;
+    padding: 10px; background: var(--ice); border-radius: 6px;
+  }
+  .coche {
+    font-size: 12.5px; display: flex; align-items: center; gap: 7px;
+    cursor: pointer; color: var(--text-main); user-select: none;
+  }
+  .coche input { width: auto; }
+
+  /* Exemplaire dont la categorie est fermee a la reparation : grise et non
+     cliquable, plutot que de laisser cocher puis avertir apres coup. */
+  .coche-desactivee { color: var(--text-light); cursor: not-allowed; }
+  .coche-desactivee input { cursor: not-allowed; }
+
+  /* Bulle d'aide au survol : un petit "?" a cote d'un intitule de champ,
+     pour les quelques endroits ou le mot seul ne suffit pas a deviner la
+     consequence d'un choix. Volontairement rare — un "?" a cote de CHAQUE
+     champ serait plus de bruit que d'aide ; reserve aux endroits ou une
+     mauvaise comprehension a un vrai cout (donnee mal saisie, exemplaire
+     mal classe). Accessible au clavier (tabindex + :focus, pas seulement
+     :hover) : un benevole au trackpad recalcitrant doit pouvoir l'atteindre
+     aussi facilement qu'a la souris. */
+  .aide-bulle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 15px; height: 15px; border-radius: 50%; flex: 0 0 auto;
+    background: var(--ice-border); color: var(--navy);
+    font-size: 10px; font-weight: 700; cursor: help;
+    position: relative; margin-left: 5px; vertical-align: middle;
+    user-select: none;
+  }
+  .aide-bulle:hover, .aide-bulle:focus {
+    background: var(--navy); color: #fff; outline: none;
+  }
+  .aide-bulle-texte {
+    display: none;
+    position: absolute; bottom: 130%; left: 0; transform: translateX(-6px);
+    width: 220px; padding: 8px 10px; border-radius: 6px;
+    background: var(--navy); color: #fff; font-size: 11.5px; font-weight: 400;
+    line-height: 1.45; text-align: left; z-index: 80;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
+  .aide-bulle-texte::after {
+    content: ""; position: absolute; top: 100%; left: 12px;
+    border: 5px solid transparent; border-top-color: var(--navy);
+  }
+  .aide-bulle:hover .aide-bulle-texte, .aide-bulle:focus .aide-bulle-texte { display: block; }
+
+  .badge-clic { cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+  .badge-clic:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(27,54,104,0.35); }
+
+  /* Toast flottant en bas à droite */
+  .toast-message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1a6b34;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(26,107,52,0.3);
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 300px;
+    word-wrap: break-word;
+    z-index: 9999;
+    animation: slideInToast 0.3s ease-out;
+  }
+  @keyframes slideInToast {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOutToast {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(400px); opacity: 0; }
+  }
+
+  .fiche-entete { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .fiche-titre { font-weight: 700; font-size: 15px; color: var(--navy); }
+  .fiche-sous { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .fiche-infos {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 4px 20px; margin: 14px 0 4px;
+  }
+  .fiche-infos .li {
+    display: flex; justify-content: space-between; gap: 10px;
+    border-bottom: 1px dotted var(--ice-border); padding: 4px 0; font-size: 12.5px;
+  }
+  .fiche-infos .k { color: var(--text-light); }
+  .fiche-infos .v { font-weight: 600; text-align: right; }
+  /* vignette dans l'entete du lot : reperage visuel rapide */
+  .lot-vignette { flex: 0 0 auto; display: flex; align-items: center; margin-right: 2px; }
+  .lot-vignette-img {
+    width: 46px; height: 46px; object-fit: contain; display: block;
+    border: 1px solid var(--ice-border); border-radius: 5px;
+    background: var(--white); padding: 2px;
+  }
+
+  /* vignette d'incident : preuve visuelle du dommage, cliquable pour agrandir */
+  .mini-photo { display: inline-flex; }
+  .mini-photo-img {
+    width: 34px; height: 34px; object-fit: cover; display: block;
+    border: 1px solid var(--ice-border); border-radius: 5px; background: var(--white);
+    transition: transform 0.1s;
+  }
+  .mini-photo a:hover .mini-photo-img { transform: scale(1.08); }
+
+  /* galerie de plusieurs photos (controles/incidents, jusqu'a 4) */
+  .galerie-pj { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .galerie-item { position: relative; display: inline-flex; }
+  .galerie-item .mini-photo-img { width: 34px; height: 34px; }
+  .galerie-item a:hover .mini-photo-img { transform: scale(1.08); }
+  .galerie-suppr {
+    position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; line-height: 14px;
+    padding: 0; border-radius: 50%; border: 1px solid var(--ice-border); background: var(--white);
+    color: #a3242a; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center;
+  }
+  .galerie-suppr:hover { background: #a3242a; color: var(--white); border-color: #a3242a; }
+
+  .bon { border: 1px solid var(--ice-border); border-radius: 9px; margin: 0 0 10px; overflow: hidden; }
+  .bon-retard { border-color: var(--red); }
+  .bon-tete { display: flex; align-items: center; gap: 10px; cursor: pointer;
+    background: var(--ice); padding: 9px 12px; }
+  .bon.ouvert .bon-tete { border-bottom: 1px solid var(--ice-border); }
+  .bon-tete:hover { background: #e3eaf6; }
+  .bon-chevron { color: var(--text-light); flex-shrink: 0; transition: transform .15s; display: inline-block; }
+  .bon.ouvert .bon-chevron { transform: rotate(90deg); }
+  .bon-tete-txt { flex: 1; min-width: 0; }
+  .bon-tete-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .bon-titre { font-weight: 700; color: var(--navy); font-size: 14px; }
+  .bon-meta { color: var(--text-mid); font-size: 12.5px; }
+  .bon-corps { display: none; }
+  .bon.ouvert .bon-corps { display: block; }
+  .bon-tbl { margin: 0; }
+  .bon-tbl th, .bon-tbl td { font-size: 12.5px; }
+  .bon-actions { display: flex; gap: 8px; flex-wrap: wrap; padding: 9px 12px; background: #fafcff; }
+  .selection-resume { margin-top: 10px; padding: 9px 11px; background: var(--ice); border: 1px solid var(--ice-border); border-radius: 7px; font-size: 12.5px; line-height: 2; }
+  .sel-titre { font-weight: 700; color: var(--navy); }
+  .sel-chip { display: inline-block; background: var(--white); border: 1px solid var(--ice-border); border-radius: 12px; padding: 2px 9px; margin: 2px 3px; color: var(--text-main); cursor: pointer; white-space: nowrap; }
+  .sel-chip:hover { border-color: var(--red); color: var(--red); }
+  .sel-chip b { color: var(--text-light); font-weight: 700; }
+  .sel-chip:hover b { color: var(--red); }
+  .sel-vider { margin-left: 6px; color: var(--navy); font-weight: 600; cursor: pointer; text-decoration: underline; }
+  .sel-vider:hover { color: var(--red); }
+  .champ-auto { background: var(--ice); color: var(--text-mid); cursor: not-allowed; }
+  .fiche-docs { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 2px; }
+  .lot-docs { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 10px; }
+  .lien-doc { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; font-size: 12.5px;
+    color: var(--navy); background: var(--ice); border: 1px solid var(--ice-border); border-radius: 6px;
+    text-decoration: none; }
+  .lien-doc:hover { background: var(--ice-hover); }
+  .fiche-photo { margin: 12px 0 2px; }
+  .fiche-photo-img {
+    max-width: 210px; max-height: 150px; width: auto; height: auto;
+    display: block; object-fit: contain;
+    border: 1px solid var(--ice-border); border-radius: 8px;
+    background: var(--white); padding: 6px;
+  }
+
+  /* Meme langage visuel que .section-titre (soulignement rouge court) pour tout titre
+     de tableau, quel que soit son contexte : sans ce repere, un h4 en gras/majuscules
+     se fond dans l'en-tete du tableau juste en dessous, lui aussi en couleur foncee. */
+  .fiche-hist h4 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--navy); margin: 16px 0 8px;
+  }
+  .fiche-hist h4::after {
+    content: ""; display: block; width: 22px; height: 2px;
+    background: var(--red); margin-top: 4px; border-radius: 2px;
+  }
+  .fiche-hist table { border: 1px solid var(--ice-border); border-radius: 6px; overflow: hidden; }
+  .fiche-hist td, .fiche-hist th { padding: 7px 9px; font-size: 12px; }
+
+  .lot-orphelins { border-style: dashed; background: var(--zebra); }
+  .lot-orphelins .lot-title { color: var(--text-light); font-style: italic; }
+  .lot-orphelins.open { border-left: 3px dashed var(--text-light); }
+
+  /* ============================================================
+     DIAGNOSTIC
+     ============================================================ */
+  .diag { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--ice-border); }
+  #diagSortie {
+    margin: 10px 0 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px; line-height: 1.55;
+    color: var(--text-mid);
+    background: var(--ice);
+    border: 1px solid var(--ice-border);
+    border-left: 3px solid var(--red);
+    border-radius: 6px;
+    padding: 12px 14px;
+    white-space: pre-wrap;
+    max-height: 340px; overflow: auto;
+  }
+  #diagSortie:empty { display: none; }
+
+  /* ============================================================
+     À PROPOS
+     ============================================================ */
+  /* « À propos » : seule rubrique de l'aide qui n'est pas du texte courant.
+     Elle sort donc de la colonne de lecture de 820 px et s'organise en deux
+     colonnes — le logo a besoin de place pour se lire. */
+  #sec-apropos { max-width: none; }
+  .apropos-box {
+    max-width: none; margin: 18px 0 0;
+    display: grid; grid-template-columns: minmax(240px, 320px) 1fr;
+    align-items: stretch;
+    background: var(--white); border: 1px solid var(--ice-border);
+    border-radius: 10px; overflow: hidden;
+    box-shadow: 0 4px 18px rgba(27,54,104,0.12);
+  }
+  .apropos-corps { padding: 26px 30px; align-self: center; }
+  /* Le pied reprend toute la largeur, sous les deux colonnes. */
+  .apropos-pied { grid-column: 1 / -1; }
+  .apropos-rubrique {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--red); margin-bottom: 7px;
+  }
+  .apropos-nom { font-weight: 700; font-size: 15px; color: var(--text-main); }
+  .apropos-soft {
+    font-weight: 800; font-size: 18px; letter-spacing: 0.1em;
+    color: var(--text-main);
+  }
+  .apropos-soft span { color: var(--spruce-mid, #10B981); }
+  .apropos-soft-desc { font-size: 12.5px; color: var(--text-mid); margin-top: 3px; }
+
+  /* ---- Logo complet (aide « À propos ») ----
+     Reprise fidele du SVG d'origine. Couleurs pilotables par variables,
+     avec repli sur la palette d'origine si elles ne sont pas definies. */
+  /* Panneau du logo : colonne de gauche, fond glace pour detacher le visuel
+     du corps blanc. Le logo porte deja son propre fond sombre arrondi. */
+  .apropos-logo {
+    display: flex; align-items: center; justify-content: center;
+    padding: 26px 24px;
+    background: var(--ice); border-right: 1px solid var(--ice-border);
+  }
+  /* Le SVG se cale sur la colonne (les attributs width/height du balisage ne
+     servent plus que de repli si la feuille de style ne charge pas). */
+  .logo-complet { display: block; width: 100%; height: auto; max-width: 250px; }
+  .logo-complet .lc-bg { fill: var(--logo-bg, #0F172A); }
+  .logo-complet .lc-shield {
+    fill: var(--logo-shield, #1E293B);
+    stroke: var(--logo-shield-stroke, #334155); stroke-width: 3px;
+  }
+  .logo-complet .lc-carabiner {
+    fill: none; stroke: var(--carabiner-color, #0EA5E9);
+    stroke-width: 28px; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .logo-complet .lc-gate { fill: var(--carabiner-gate, #E2E8F0); }
+  .logo-complet .lc-lock { fill: var(--carabiner-lock, #F97316); }
+  .logo-complet .lc-ridge { stroke: #FFFFFF; stroke-width: 2.5px; opacity: 0.6; }
+  .logo-complet .lc-pin { fill: var(--logo-bg, #0F172A); }
+  .logo-complet .lc-mountain { fill: #1E293B; opacity: 0.8; }
+  .logo-complet .lc-facet { fill: #475569; opacity: 0.5; }
+  .logo-complet .lc-trunk { fill: var(--spruce-trunk, #78350F); }
+  .logo-complet .lc-tier-4 { fill: var(--spruce-dark, #047857); }
+  .logo-complet .lc-tier-3 { fill: var(--spruce-mid, #10B981); }
+  .logo-complet .lc-tier-2 { fill: var(--spruce-light, #34D399); }
+  .logo-complet .lc-tier-1 { fill: var(--spruce-top, #6EE7B7); }
+  .logo-complet .lc-highlight { fill: #FFFFFF; opacity: 0.2; }
+  .logo-complet .lc-titre {
+    fill: #F8FAFC; font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 800; font-size: 38px; letter-spacing: 3px;
+  }
+  .logo-complet .lc-titre-accent { fill: #38BDF8; }
+  .logo-complet .lc-sous {
+    fill: #94A3B8; font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 600; font-size: 14px; letter-spacing: 2.5px;
+  }
+  .apropos-desc { font-size: 12.5px; color: var(--text-mid); margin-top: 3px; }
+  .apropos-liens { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+  .apropos-lien { color: var(--navy); font-size: 12.5px; text-decoration: none; word-break: break-word; }
+  .apropos-lien:hover { text-decoration: underline; }
+  .apropos-filet { height: 1px; background: var(--ice-border); margin: 15px 0; }
+  .apropos-licence { display: flex; align-items: flex-start; gap: 13px; }
+  .apropos-licence img { border: 0; display: block; margin-top: 2px; }
+  .apropos-licence > div { font-size: 12px; color: var(--text-mid); line-height: 1.55; }
+  .apropos-licence b { color: var(--text-main); }
+  .apropos-licence a { color: var(--navy); }
+  .cc-repli {
+    font-size: 11px; font-weight: 700; border: 1.5px solid var(--text-main);
+    padding: 4px 8px; border-radius: 4px; display: inline-block; white-space: nowrap;
+  }
+  .apropos-pied {
+    background: var(--ice); border-top: 1px solid var(--ice-border);
+    padding: 9px 18px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 11.5px; color: var(--text-mid);
+  }
+
+  /* ============================================================
+     CRÉDITS
+     ============================================================ */
+  .credits {
+    background: var(--navy-dark);
+    color: rgba(255,255,255,0.55);
+    padding: 14px 20px;
+    margin-top: 8px;
+  }
+  .credits-inner {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    font-size: 11px; letter-spacing: 0.02em;
+  }
+  .credits b { color: rgba(255,255,255,0.8); font-weight: 600; }
+  .credits .sep { color: var(--red); font-weight: 700; }
+  .credits-mark {
+    width: 16px; height: 3px; background: var(--red);
+    border-radius: 2px; flex-shrink: 0;
+  }
+  /* Nom du logiciel : toujours présent, non paramétrable */
+  .credits-soft {
+    font-weight: 800; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.9);
+  }
+  .credits-soft span { color: var(--spruce-light, #34D399); }
+  /* Baseline : collée au nom (pas de séparateur), un cran plus discrète —
+     elle qualifie EPILOG, elle n'est pas une mention de plus dans la liste. */
+  .credits-baseline { opacity: 0.72; margin-left: -3px; }
+  .credits-version { opacity: 0.6; font-size: 11px; margin-left: -2px; }
+  .credits-apropos {
+    background: none; border: none; padding: 0;
+    color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.02em; text-transform: none;
+    text-decoration: underline; cursor: pointer;
+  }
+  .credits-apropos:hover { color: var(--white); background: none; }
+  .credits-lien { color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 600; text-decoration: none; }
+  .credits-lien:hover { color: #fff; text-decoration: underline; }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width: 860px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---- Tablette et grand mobile ---- */
+  @media (max-width: 640px) {
+    .content { padding: 14px 12px 22px; }
+    .header, .tabs-bar, .credits { padding-left: 12px; padding-right: 12px; }
+
+    /* cartes : deux par ligne, puis une seule sur petit ecran */
+    .cards { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-grille { grid-template-columns: 1fr; }
+
+    /* onglets : defilement horizontal plutot que retour a la ligne desordonne */
+    .tabs {
+      flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { white-space: nowrap; flex: 0 0 auto; }
+
+    /* filtres empiles, chaque champ pleine largeur */
+    .filtre-champ { min-width: 0; flex: 1 1 100%; }
+    .filtres { gap: 8px; }
+
+    /* aide : la fenetre prend l'ecran, le menu passe en bandeau horizontal */
+    .aide { padding: 0; }
+    .aide-modale { width: 100%; height: 100%; border-radius: 0; }
+    .aide-corps { flex-direction: column; }
+    .aide-nav {
+      flex: 0 0 auto; width: 100%; display: flex; overflow-x: auto; overflow-y: hidden;
+      padding: 0; border-right: none; border-bottom: 1px solid var(--ice-border);
+      scrollbar-width: none;
+    }
+    .aide-nav::-webkit-scrollbar { display: none; }
+    .aide-nav-groupe { display: none; }
+    .aide-nav-item {
+      flex: 0 0 auto; white-space: nowrap; border-left: none;
+      border-bottom: 3px solid transparent; padding: 11px 13px;
+    }
+    .aide-nav-item.actif { border-left: none; border-bottom-color: var(--red); }
+    .aide-sections { padding: 18px 16px 24px; }
+
+    /* « À propos » : deux colonnes ne tiennent plus, le logo repasse au-dessus */
+    .apropos-box { grid-template-columns: 1fr; }
+    .apropos-logo {
+      border-right: none; border-bottom: 1px solid var(--ice-border);
+      padding: 22px;
+    }
+    .logo-complet { max-width: 200px; }
+    .apropos-corps { padding: 20px 22px; }
+  }
+
+  /* ---- Mobile ---- */
+  @media (max-width: 480px) {
+    .cards { grid-template-columns: 1fr; }
+
+    /* zones tactiles : boutons et champs plus hauts pour le doigt */
+    button, select, input[type="text"], input[type="number"], input[type="date"] {
+      min-height: 42px; font-size: 15px;
+    }
+    .tab { padding: 12px 12px; font-size: 11px; }
+    .btn-del, .btn-edit, .badge-ref, .badge { font-size: 12px; }
+
+    /* Tableaux : deux cas distincts, sinon les regles se superposent mal.
+       1) tableau deja dans un conteneur defilant -> c'est le CONTENEUR qui
+          defile, le tableau reste un vrai tableau (en-tetes collants intacts).
+       2) tableau pose nu dans la page -> le tableau lui-meme devient defilant.
+       Le white-space:nowrap force la largeur naturelle : sans lui le texte
+       se replie, rien ne deborde, et donc aucun ascenseur n'apparait. */
+    .scroll-y, .stat-bloc, .refs-scroll, .refs-bloc { overflow-x: auto; }
+    .content table {
+      display: block; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      width: 100%; min-width: 0;
+    }
+    .scroll-y table, .stat-bloc table, .refs-scroll table, .refs-bloc table {
+      display: table;
+    }
+    .content th, .content td { white-space: nowrap; }
+    /* Exception au defilement horizontal generique : ce tableau porte
+       l'information la plus critique de tout l'ecran (Vue d'ensemble). Le
+       defilement cache silencieusement la colonne Alerte sans aucun indice
+       visuel — ici, on prefere que le detail s'enroule sur deux lignes,
+       pour que tout tienne sans avoir besoin de decouvrir un geste caché. */
+    #tableAlertesPriorite { display: table; overflow-x: visible; }
+    #tableAlertesPriorite th, #tableAlertesPriorite td { white-space: normal; }
+    #tableAlertesPriorite th:nth-child(2), #tableAlertesPriorite td:nth-child(2) { width: 45%; }
+    /* Indice visuel de defilement horizontal, pour TOUS les tableaux et
+       conteneurs defilants restants (le cas particulier ci-dessus est le
+       seul a avoir ete retravaille en profondeur ; ici, on se contente de
+       rendre visible ce qui etait deja la, plutot que de redessiner
+       chaque tableau un par un). Ombre interieure a droite = "il y a
+       encore quelque chose a voir en faisant defiler" ; disparait des
+       qu'on a atteint la fin. Classe posee et retiree par JS (voir
+       majIndicesDefilement, fin du fichier JS) : cette regle ne fait que
+       la dessiner quand elle est presente. */
+    .defile-dispo { box-shadow: inset -12px 0 12px -6px rgba(0,0,0,0.55); }
+    .fiche-infos { min-width: 0; }
+
+    /* la fiche exemplaire : infos en une colonne, boutons pleine largeur */
+    .fiche-infos { grid-template-columns: 1fr; }
+    .fiche-photo-img { max-width: 100%; max-height: 190px; }
+    .fiche-entete { gap: 8px; }
+    .form-actions { flex-wrap: wrap; }
+    .form-actions button { flex: 1 1 auto; }
+
+    /* en-tete plus compact pour laisser la place au contenu */
+    .header { padding: 14px 12px; }
+    .header-emblem { width: 46px; height: 46px; }
+    .header-titles h1 { font-size: 15px; }
+
+    /* grille de coches (prets) : une colonne, cases plus espacees */
+    .grille-coches { grid-template-columns: 1fr; }
+    .coche { padding: 4px 0; }
+
+    th, td { padding: 10px 8px; }
+  }
+
+  /* =====================================================================
+     TELEPHONE (2026.5.16) -- tableaux en cartes. Ne s'applique QU'EN DESSOUS
+     de 640 px : l'affichage ordinateur est strictement inchange (verifie par
+     comparaison pixel a pixel, tests/captures_ecrans.py). Place EN FIN de
+     feuille pour primer sur l'ancien defilement horizontal (480 px), juge
+     illisible par Pierre. Chaque ligne de tableau devient une carte ; le
+     titre de colonne est rappele devant chaque valeur grace a l'attribut
+     data-label pose par etiqueterTableaux() (JS, sans effet visuel ailleurs).
+     ===================================================================== */
+  @media (max-width: 640px) {
+    .content table, .fiche table, #materiel-editor table, #refs-editor table,
+    .scroll-y table, .stat-bloc table, .refs-scroll table, .refs-bloc table,
+    #tableAlertesPriorite {
+      display: block; width: 100%; min-width: 0; overflow: visible;
+      border: none; background: transparent; box-shadow: none;
+    }
+    .content table tbody, .content table thead, .content table tr,
+    #materiel-editor table tbody, #materiel-editor table tr,
+    #refs-editor table tbody, #refs-editor table tr { display: block; width: 100%; }
+    .scroll-y, .stat-bloc, .refs-scroll, .refs-bloc { overflow-x: visible; }
+    .defile-dispo { box-shadow: none; }
+
+    /* ligne d'en-tete : remplacee par les etiquettes de chaque carte */
+    table tr.tr-entete, table thead { display: none !important; }
+
+    /* une ligne = une carte */
+    .content table tr:not(.tr-entete), #materiel-editor table tr:not(.tr-entete),
+    #refs-editor table tr:not(.tr-entete) {
+      background: var(--white, #fff); border: 1px solid var(--ice-border, #d6dde8);
+      border-radius: 10px; margin: 0 0 10px; padding: 8px 12px;
+      box-shadow: 0 1px 2px rgba(27, 54, 104, 0.06);
+    }
+    /* une cellule = une ligne "etiquette ... valeur" */
+    .content table td, .content table tr:not(.tr-entete) th,
+    #materiel-editor table td, #refs-editor table td {
+      /* etiquette flottante a gauche, contenu qui s'ecoule a droite : une
+         cellule a plusieurs elements (badges + texte) reste d'un seul tenant */
+      display: block; overflow: hidden;
+      width: 100% !important; padding: 5px 0; border: none;
+      border-bottom: 1px dashed var(--ice-border, #e3e8f0);
+      white-space: normal !important; text-align: right; font-size: 14px;
+    }
+    .content table td:last-child, #materiel-editor table td:last-child,
+    #refs-editor table td:last-child { border-bottom: none; }
+    .content table td[data-label]:not([data-label=""])::before,
+    #materiel-editor table td[data-label]:not([data-label=""])::before,
+    #refs-editor table td[data-label]:not([data-label=""])::before {
+      content: attr(data-label); float: left; width: 40%; text-align: left; margin-right: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--muted, #6b7a90); padding-top: 2px;
+    }
+    /* cellule sans titre (actions, message "Aucun...") : pleine largeur */
+    .content table td[data-label=""], .content table td:not([data-label]),
+    #materiel-editor table td[data-label=""], #refs-editor table td[data-label=""] {
+      text-align: left;
+    }
+    /* champ vide (« - ») : inutile sur un petit ecran, on le retire de la carte */
+    .content table td.cellule-vide, #materiel-editor table td.cellule-vide,
+    #refs-editor table td.cellule-vide { display: none; }
+    /* actions : boutons qui passent a la ligne, larges et faciles a toucher */
+    .content table td.td-actions, #materiel-editor table td.td-actions { display: block; padding-top: 8px; }
+    .content table td.td-actions > div, .content table td.td-actions {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .content table td.td-actions button { flex: 1 1 auto; }
+    /* champs dans une carte (grille des numeros de serie...) : pleine largeur */
+    .content table td input[type="text"], #materiel-editor table td input[type="text"] { width: 100%; }
+
+    /* rangees de boutons au-dessus des listes et des lots : passent a la ligne */
+    .barre-actions, .lot-actions, .lot-head { flex-wrap: wrap; }
+    .lot-actions button, .barre-actions button { flex: 1 1 auto; }
+
+    /* sous-onglets : meme defilement horizontal que les onglets */
+    .sous-onglets {
+      display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .sous-onglets::-webkit-scrollbar { display: none; }
+    .sous-onglet { flex: 0 0 auto; white-space: nowrap; }
+
+    /* onglets collants : restent visibles en faisant defiler la page */
+    .tabs-bar { position: sticky; top: 0; z-index: 20; }
+  }
+
+  /* =====================================================================
+     NAVIGATION (2026.5.17) -- maquette validee par Pierre.
+     - Ordinateur (>= 1000 px) : menu lateral ; les onglets et les barres de
+       sous-onglets (Suivi des EPI, Listes du club) sont masques, mais restent
+       dans la page : le menu les actionne (naviguer()), tout le code existant
+       et les tests continuent de passer par eux.
+     - Entre 641 et 999 px (tablette, panneau Grist etroit) : RIEN ne change,
+       onglets d'origine (verifie au pixel pres).
+     - Telephone (<= 640 px) : barre de 5 icones en bas, page "Plus".
+     ===================================================================== */
+  #navLaterale, #navBas { display: none; }
+  /* l'attribut hidden doit primer sur display:flex des boutons du menu
+     (entree Entretien sans table ENTRETIENS) */
+  #navLaterale [hidden], #navBas [hidden], #pane-plus [hidden] { display: none !important; }
+  .disposition { display: block; }
+
+  @media (min-width: 1000px) {
+    .tabs-bar { display: none; }
+    #epi-so, #refs-so { display: none; }
+    .disposition { display: flex; align-items: flex-start; }
+    .disposition > .content { flex: 1 1 auto; min-width: 0; }
+    #navLaterale {
+      display: flex; flex-direction: column; gap: 2px; flex: 0 0 236px;
+      position: sticky; top: 0; align-self: flex-start; max-height: 100vh; overflow-y: auto;
+      background: var(--white, #fff); border-right: 1px solid var(--ice-border, #d6dde8);
+      padding: 16px 10px 24px; box-sizing: border-box;
+    }
+    #navLaterale button {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      background: transparent; color: var(--navy, #1B3668); border: none; border-radius: 8px;
+      text-transform: none; letter-spacing: 0; white-space: normal; cursor: pointer;
+    }
+    #navLaterale .nl-item { padding: 10px 12px; font-size: 15px; font-weight: 600; }
+    #navLaterale .nl-sous { padding: 7px 12px 7px 40px; font-size: 14px; font-weight: 500; color: #3E4F6B; }
+    #navLaterale button:hover { background: #EEF2F8; }
+    #navLaterale button.nav-actif { background: var(--navy, #1B3668); color: #fff; }
+    #navLaterale .nl-groupe { display: flex; align-items: center; gap: 10px; padding: 12px 12px 4px; font-size: 15px; font-weight: 600; color: var(--navy, #1B3668); }
+    #navLaterale .nl-separateur { height: 1px; background: #E3E8F0; margin: 10px 4px; }
+    #navLaterale .nl-titre { padding: 0 12px 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B82; }
+    #navLaterale .nl-compte, #navLaterale .nl-alerte { margin-left: auto; font-size: 12px; font-weight: 700; }
+    #navLaterale .nl-compte:empty, #navLaterale .nl-alerte:empty { display: none; }
+    #navLaterale .nl-alerte { color: #B4232A; }
+    #navLaterale button.nav-actif .nl-alerte, #navLaterale button.nav-actif .nl-compte { color: #fff; }
+    #navLaterale .nl-compte[data-compte] { background: var(--red, #E30613); color: #fff; padding: 1px 7px; border-radius: 10px; }
+  }
+
+  @media (max-width: 640px) {
+    .tabs-bar { display: none; }
+    body { padding-bottom: 76px; }
+    #navBas {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: var(--white, #fff); border-top: 1px solid var(--ice-border, #d6dde8);
+      padding: 4px 2px calc(8px + env(safe-area-inset-bottom, 0px));
+    }
+    #navBas button {
+      display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 56px;
+      background: transparent; color: #5B6B82; border: none; border-radius: 0; padding: 6px 0;
+      font-size: 11px; font-weight: 600; text-transform: none; letter-spacing: 0;
+    }
+    #navBas button.nav-actif { color: var(--navy, #1B3668); font-weight: 700; box-shadow: inset 0 -3px 0 var(--red, #E30613); }
+    #pane-plus .plus-bloc { background: var(--white, #fff); border: 1px solid var(--ice-border, #d6dde8); border-radius: 12px; margin: 0 0 14px; overflow: hidden; }
+    #pane-plus .plus-titre { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6B82; margin: 4px 4px 6px; }
+    #pane-plus .plus-lien {
+      display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 12px 16px;
+      background: transparent; color: var(--navy, #1B3668); border: none; border-bottom: 1px solid #E3E8F0;
+      border-radius: 0; text-align: left; font-size: 16px; font-weight: 600; text-transform: none; letter-spacing: 0;
+    }
+    #pane-plus .plus-lien:last-child { border-bottom: none; }
+    #pane-plus .plus-lien span:nth-child(2) { flex-grow: 1; }
+    #pane-plus .plus-fleche { color: #5B6B82; font-size: 20px; }
+  }
+
+  /* =====================================================================
+     NAVIGATION, livraison 2 (2026.5.18)
+     ===================================================================== */
+  /* -- menu lateral retractable (ordinateur) : icones seules, infobulles -- */
+  #navLaterale .nl-court { display: none; }
+  @media (min-width: 1000px) {
+    #navLaterale { transition: flex-basis 0.15s ease; }
+    #navLaterale .nl-replier {
+      padding: 8px 12px; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #5B6B82;
+    }
+    #navLaterale.replie { flex-basis: 64px; padding-left: 8px; padding-right: 8px; }
+    #navLaterale.replie .nl-lib, #navLaterale.replie .nl-sous, #navLaterale.replie .nl-groupe,
+    #navLaterale.replie .nl-titre, #navLaterale.replie .nl-separateur { display: none !important; }
+    #navLaterale.replie .nl-court { display: flex; }
+    #navLaterale.replie button { justify-content: center; padding-left: 0; padding-right: 0; position: relative; }
+    #navLaterale.replie .nl-chevron { transform: rotate(180deg); }
+    /* menu replie : les sous-rubriques n'y figurent plus -> la barre de
+       sous-rubriques d'origine reapparait en tete de la rubrique */
+    .disposition.menu-replie #epi-so, .disposition.menu-replie #refs-so { display: flex; }
+    /* compteur de prets : pastille en coin de l'icone */
+    #navLaterale.replie .nl-compte[data-compte] { position: absolute; top: 2px; right: 6px; margin: 0; font-size: 10px; padding: 0 5px; }
+  }
+
+  /* -- actions rares d'un lot : derriere "..." sur telephone uniquement.
+        Ailleurs, le conteneur est transparent (display: contents) et le
+        bouton "..." absent : rendu identique a avant. -- */
+  .btn-plus-actions { display: none; }
+  .actions-rares { display: contents; }
+  @media (max-width: 640px) {
+    .btn-plus-actions { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; font-size: 18px; letter-spacing: 0.1em; }
+    .actions-rares { display: none; }
+    .rares-ouverts > .actions-rares { display: flex; flex-wrap: wrap; gap: 6px; flex-basis: 100%; }
+    .rares-ouverts > .actions-rares > button { flex: 1 1 auto; }
+
+    /* -- sous-rubriques (Suivi des EPI, Listes du club) en pastilles -- */
+    #epi-so, #refs-so { border-bottom: none; gap: 6px; padding: 2px 0 6px; }
+    #epi-so .sous-onglet, #refs-so .sous-onglet {
+      border: 1px solid var(--ice-border, #c5cfde); border-radius: 18px; margin: 0;
+      padding: 8px 14px; background: var(--white, #fff); color: var(--navy, #1B3668); font-size: 14px;
+    }
+    #epi-so .sous-onglet.actif, #refs-so .sous-onglet.actif {
+      background: var(--navy, #1B3668); border-color: var(--navy, #1B3668); color: #fff;
+    }
+    #epi-so .sous-onglet.actif .so-compte, #refs-so .sous-onglet.actif .so-compte { color: #FFD5D7; }
+  }
+</style>
+
+
