@@ -27,7 +27,7 @@ with ouvrir(D) as page:
                            ("remise a zero", "remettre a zero"), ("fiches de vie PDF", "fiches de vie (pdf)"),
                            ("numeros de serie", "numeros de serie"), ("prolongation par reparation", "prolonger la duree de vie"),
                            ("commande dans Editer le lot", "modifier la commande"), ("filtre de lieu", "filtre lieu de stockage"),
-                           ("rubrique Import / export", "rubrique import / export"), ("exemplaire unique", "exemplaire unique"), ("exemplaire retrouve", "declarer retrouve"), ("regroupement des exports", "reprendre un inventaire, 2."), ("liste filtree du Materiel", "exporter la liste"),
+                           ("rubrique Import / export", "rubrique import / export"), ("exemplaire unique", "exemplaire unique"), ("exemplaire retrouve", "declarer retrouve"), ("depot github", "github.com/pierretravers89/epilog"), ("ou trouver la derniere version", "ou trouver la derniere version"), ("regroupement des exports", "reprendre un inventaire, 2."), ("liste filtree du Materiel", "exporter la liste"),
                            ("colonnes de detail des documents imprimes", "ajoute de lui-meme les colonnes"),
                            ("photos d'un exemplaire", "photos d'un exemplaire"),
                            ("structure : creation automatique", "cree lui-meme les elements nouveaux"),

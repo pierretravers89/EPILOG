@@ -2285,3 +2285,9 @@ Points d'entrée : bouton `data-act="retrouve"` de `ouvrirFicheExemplaire` (Perd
 
 Logiciel sous EUPL 1.2, documentation sous CC BY-SA 4.0. L'EUPL demande la mention « Licensed under the EUPL » juste après le copyright : en-têtes du JS et du HTML (avec `SPDX-License-Identifier: EUPL-1.2`). Mentions visibles : `piedEpilog()` (documents imprimés), bloc `.apropos-licence` de l'aide (repris par l'aide imprimée), sans image externe. `LICENSE` contient le texte officiel anglais de l'EUPL 1.2 (liste SPDX, paquet npm `spdx-license-list` 6.12.0), pour la détection par GitHub ; le texte français officiel est lié (article 13 : même valeur). Test : `test_39`.
 
+---
+
+### 7.86 Aide : dépôt GitHub (2026.5.37)
+
+Texte seulement, dans `src/widget_pilotage.html` : sous-section « Où trouver la dernière version » de `#sec-miseajour` (liens vers le dépôt, `/releases`, `/issues`, tous en `target="_blank"`) et rubrique « Code source et mises à jour » dans `#sec-apropos` (style `.apropos-desc a`). Adresse du dépôt : `https://github.com/pierretravers89/EPILOG`. Test : `test_40`.
+

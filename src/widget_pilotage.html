@@ -970,13 +970,29 @@
              <b>widget_pilotage.js</b>. Mettre à jour le code ne touche <b>jamais</b> à vos données (les
              tables Grist). Le numéro de la version qui tourne s'affiche dans le pied de page
              (« EPILOG v… ») : comparez-le à celui annoncé.</p>
+
+          <h4>Où trouver la dernière version</h4>
+          <p>EPILOG est publié sur GitHub : <a href="https://github.com/pierretravers89/EPILOG" target="_blank" rel="noopener">github.com/pierretravers89/EPILOG</a>.</p>
+          <ul style="margin:6px 0 10px 18px">
+            <li><b>Savoir s'il existe une version plus récente</b> : page
+                <a href="https://github.com/pierretravers89/EPILOG/releases" target="_blank" rel="noopener">Releases</a> du dépôt (les versions
+                marquantes), ou fichier <b>CHANGELOG.md</b> (toutes les versions, la plus récente en tête, avec ce
+                qui change). Comparez avec le numéro affiché dans votre pied de page.</li>
+            <li><b>Récupérer les deux fichiers</b> : sur la page Releases, ils sont joints à chaque version ;
+                sinon, dans le dossier <b>src</b> du dépôt, ouvrez <b>widget_pilotage.html</b> puis
+                <b>widget_pilotage.js</b> et utilisez le bouton « Copy raw file » (copier le fichier brut)
+                ou « Download raw file » (télécharger).</li>
+            <li><b>Signaler un problème ou proposer une idée</b> : page
+                <a href="https://github.com/pierretravers89/EPILOG/issues" target="_blank" rel="noopener">Issues</a> du dépôt. Ce dépôt est public :
+                n'y joignez jamais de données de votre club (noms, e-mails, numéros de licence).</li>
+          </ul>
           <p><b>Avant toute mise à jour</b>, téléchargez une sauvegarde (rubrique Import / export →
              Sauvegarder et restaurer) et <b>gardez les deux fichiers de l'ancienne version</b> : en cas de
              problème, il suffit de les recoller.</p>
 
           <h4>Méthode 1 — remplacer le code dans le document (recommandée)</h4>
           <ol>
-            <li>Récupérez les deux fichiers de la nouvelle version.</li>
+            <li>Récupérez les deux fichiers de la nouvelle version (voir ci-dessus).</li>
             <li>Dans Grist, ouvrez la page qui contient EPILOG, sélectionnez le widget et ouvrez ses
                 options (panneau de droite) pour accéder à l'éditeur du widget, le
                 « Custom widget builder » : une zone pour le <b>HTML</b>, une pour le <b>JavaScript</b>.</li>
@@ -1161,6 +1177,10 @@
                 <div class="apropos-rubrique">Références</div>
                 <div class="apropos-liens" id="aproposLiens"></div>
               </div>
+              <div class="apropos-filet"></div>
+              <div class="apropos-rubrique">Code source et mises à jour</div>
+              <div class="apropos-desc"><a href="https://github.com/pierretravers89/EPILOG" target="_blank" rel="noopener">github.com/pierretravers89/EPILOG</a>
+                — dernières versions, journal des changements, signalements.</div>
               <div class="apropos-filet"></div>
               <div class="apropos-rubrique">Licence</div>
               <div class="apropos-licence">
@@ -2340,6 +2360,7 @@
     font-weight: 600; font-size: 14px; letter-spacing: 2.5px;
   }
   .apropos-desc { font-size: 12.5px; color: var(--text-mid); margin-top: 3px; }
+  .apropos-desc a { color: var(--navy); }
   .apropos-liens { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
   .apropos-lien { color: var(--navy); font-size: 12.5px; text-decoration: none; word-break: break-word; }
   .apropos-lien:hover { text-decoration: underline; }

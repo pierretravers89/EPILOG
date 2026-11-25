@@ -6,6 +6,17 @@ saisons d'un club, pas des sprints.
 
 ---
 
+## [2026.5.37] — 2026-11-25
+
+### Aide : dépôt GitHub et mise à jour
+
+- La page d'aide **« Mettre à jour EPILOG »** gagne une section **« Où trouver la dernière version »** : adresse du dépôt GitHub, page Releases et `CHANGELOG.md` pour savoir si une version plus récente existe, récupération des deux fichiers (pièces jointes des releases, ou boutons « Copy raw file » / « Download raw file » dans `src/`), signalements dans la page Issues (sans jamais y joindre de données du club).
+- La rubrique **« À propos »** porte le lien du dépôt (« Code source et mises à jour »).
+- Rappel : la licence affichée dans l'aide est l'EUPL 1.2 depuis la 2026.5.36 ; un widget qui affiche encore l'ancienne licence n'a simplement pas reçu le nouveau code.
+- Test : `test_40_aide_github.py` ; garde de l'aide (`test_27`) complétée.
+
+---
+
 ## [2026.5.36] — 2026-11-25
 
 ### Licence : EUPL 1.2 (logiciel) et CC BY-SA 4.0 (documentation)
