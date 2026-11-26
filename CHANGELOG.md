@@ -6,6 +6,17 @@ saisons d'un club, pas des sprints.
 
 ---
 
+## [2026.5.39] — 2026-11-26
+
+### Une seule largeur pour toutes les fenêtres
+
+- Toutes les fenêtres en surimpression ont désormais **la même largeur, 1 040 px** : éditeurs, formulaires de création, fiche, Réglages du club, Découper, Scinder et Aide. Il y en avait cinq jusqu'ici (680, 760, 880, 1 140 et 1 240 px), fixées à des moments différents.
+- La hauteur suit le contenu, jusqu'à la taille de l'écran (l'Aide garde sa hauteur fixe, nécessaire à son menu). Sur téléphone, rien ne change : plein écran.
+- Une seule variable de mise en forme (`--largeur-fenetre`) porte cette largeur.
+- Test : `test_41_fenetres_edition.py` vérifie la même largeur pour toutes les fenêtres.
+
+---
+
 ## [2026.5.38] — 2026-11-25
 
 ### Fenêtres d'édition et saisie protégée

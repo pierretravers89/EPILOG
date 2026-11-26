@@ -2299,3 +2299,9 @@ Aucun formulaire réécrit. `FENETRES` liste les emplacements : conteneurs `*-ed
 
 En-têtes : `enteteFenetre(action, objet)` ; `objetEdite(entity, row)` pour l'éditeur générique. Saisie protégée : `suivreSaisie(boite)` marque `data-sale` sur un `input`/`change` de confiance (hors recherche et fichier) ; `fermetureDouce(boite, fermer)` refuse la fermeture par voile ou Échap si la boîte est « sale » (`avisSaisie` : tremblement + message). Remise à zéro à chaque ouverture. Appliqué aussi aux modales Réglages, Découpe, Scission. Écart assumé avec la skill d'origine : Échap ne demande pas confirmation, il se comporte comme le clic à côté. Test : `test_41`.
 
+---
+
+### 7.88 Une seule largeur de fenêtre (2026.5.39)
+
+Variable CSS `--largeur-fenetre: 1040px` dans `:root`, utilisée par `.en-fenetre`, `.reglages-modale` (Réglages, Découpe, Scission : leurs largeurs en ligne de 680 px sont retirées) et `.aide-modale`. La classe `.fenetre-large`, toujours posée par `majFenetres()`, n'a plus d'effet visuel (gardée pour un éventuel retour en arrière). Test : `test_41`.
+

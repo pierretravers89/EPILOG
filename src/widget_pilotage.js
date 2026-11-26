@@ -509,7 +509,7 @@ function ouvrirFenetreDecoupe(matId) {
   div.id = 'decoupeModale';
   div.innerHTML =
     '<div class="reglages-fond" id="decoupeFond"></div>' +
-    '<div class="reglages-modale" role="dialog" aria-modal="true" aria-label="D\u00e9couper un exemplaire" style="width:min(680px,94vw)">' +
+    '<div class="reglages-modale" role="dialog" aria-modal="true" aria-label="D\u00e9couper un exemplaire">' +
       '<div class="reglages-head">' +
         '<span>D\u00e9couper ' + esc(m.numero_marquage) + ' \u2014 ' + esc(lot ? lot.designation : '') + '</span>' +
         '<button type="button" class="reglages-close" id="decoupeClose" aria-label="Fermer">\u00d7</button>' +
@@ -739,7 +739,7 @@ function ouvrirFenetreScission(lotId) {
   div.id = 'scissionModale';
   div.innerHTML =
     '<div class="reglages-fond" id="scissionFond"></div>' +
-    '<div class="reglages-modale" role="dialog" aria-modal="true" aria-label="Scinder un lot" style="width:min(680px,94vw)">' +
+    '<div class="reglages-modale" role="dialog" aria-modal="true" aria-label="Scinder un lot">' +
       '<div class="reglages-head">' +
         '<span>Scinder ' + esc(lot.designation) + '</span>' +
         '<button type="button" class="reglages-close" id="scissionClose" aria-label="Fermer">\u00d7</button>' +
@@ -11506,7 +11506,7 @@ new MutationObserver(function () {
      ils sont libres), donc tous les liens (lot, exemplaire, adherent...) restent
      justes sans recalcul. Colonnes absentes du document cible : ignorees et
      signalees ; colonnes nouvelles : vides. */
-var VERSION_EPILOG = '2026.5.38';   /* = premiere entree du CHANGELOG : controle par tests/test_27 */
+var VERSION_EPILOG = '2026.5.39';   /* = premiere entree du CHANGELOG : controle par tests/test_27 */
 /* Version affichee dans le pied de page (2026.5.26) : permet de savoir en un coup d'oeil quelle
    version tourne dans CE document (le code vit dans chaque document, une ancienne copie peut
    subsister apres une mise a jour) */

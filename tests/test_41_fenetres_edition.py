@@ -1,6 +1,6 @@
 """2026.5.38 : editions et creations en fenetres en surimpression, saisie protegee.
 Un editeur ou un formulaire de creation s'ouvre au-dessus de la liste (qui ne bouge pas),
-largeur standard ou large, plein ecran sur telephone. Tant que rien n'est tape, clic a cote
+une seule largeur pour toutes les fenetres (2026.5.39), plein ecran sur telephone. Tant que rien n'est tape, clic a cote
 ou Echap ferment ; apres une saisie, la fenetre reste ouverte et un avis s'affiche ; ✕ et
 Annuler ferment toujours. Meme protection pour Reglages et Scinder un lot."""
 import sys; from harnais import ouvrir, Resultats; from donnees import construire
@@ -25,7 +25,7 @@ with ouvrir(D) as page:
                "cas-002" in sa(page.inner_text("#materiel-editor .fenetre-objet")) and "casques boreo" in sa(page.inner_text("#materiel-editor .fenetre-objet")),
                "editeur : titre = action + objet (marquage et lot)")
     w = page.evaluate("document.getElementById('materiel-editor').getBoundingClientRect().width")
-    R.verifier(800 <= w <= 880, "editeur : largeur standard (%d px)" % w)
+    R.verifier(w == 1040, "editeur : largeur commune des fenetres (%d px)" % w)
     clic_voile(page)
     R.verifier(not ouvert(page, "#materiel-editor") and not voile(page), "sans saisie : un clic a cote ferme")
     # ---- saisie en cours : protege
@@ -49,9 +49,9 @@ with ouvrir(D) as page:
     # ---- formulaire de creation : large, titre, Annuler
     page.evaluate("() => naviguer('prets')"); page.wait_for_timeout(200)
     page.click("#btnTogglePret"); page.wait_for_timeout(150)
-    R.verifier(ouvert(page, "#formPret") and page.evaluate("document.getElementById('formPret').classList.contains('fenetre-large')"), "nouveau pret : fenetre large")
+    R.verifier(ouvert(page, "#formPret"), "nouveau pret : en fenetre")
     wl = page.evaluate("document.getElementById('formPret').getBoundingClientRect().width")
-    R.verifier(wl > 1100, "nouveau pret : largeur large (%d px)" % wl)
+    R.verifier(wl == 1040, "nouveau pret : meme largeur que les autres fenetres (%d px)" % wl)
     tp = sa(page.inner_text("#formPret .fenetre-titre"))
     R.verifier("nouveau pret" in tp and "bon n" in tp, "nouveau pret : titre (action + numero du bon) : %r" % tp)
     # changement de rubrique (par le menu, comme le fait l'application) : la fenetre de l'autre rubrique ne reste pas affichee
@@ -63,6 +63,8 @@ with ouvrir(D) as page:
     R.verifier(not ouvert(page, "#formPret") and not voile(page), "Annuler du formulaire de creation : ferme")
     # ---- Reglages : meme protection
     page.evaluate("ouvrirReglages()"); page.wait_for_timeout(120)
+    wr = page.evaluate("document.querySelector('#reglagesPanel .reglages-modale').getBoundingClientRect().width")
+    R.verifier(wr == 1040, "Reglages : meme largeur que les autres fenetres (%d px)" % wr)
     page.mouse.click(8, 450); page.wait_for_timeout(100)
     R.verifier(page.evaluate("document.getElementById('reglagesPanel').hidden"), "Reglages sans saisie : un clic a cote ferme")
     page.evaluate("ouvrirReglages()"); page.wait_for_timeout(120)
@@ -78,6 +80,8 @@ with ouvrir(D) as page:
     R.verifier(page.evaluate("document.getElementById('reglagesPanel').hidden"), "Reglages rouverts : propres, Echap ferme")
     # ---- Scinder un lot : meme protection
     page.evaluate("id => ouvrirFenetreScission(id)", ids_lot["Casques Boreo"]); page.wait_for_timeout(150)
+    ws = page.evaluate("document.querySelector('#scissionModale .reglages-modale').getBoundingClientRect().width")
+    R.verifier(ws == 1040, "Scinder : meme largeur que les autres fenetres (%d px)" % ws)
     page.mouse.click(8, 450); page.wait_for_timeout(100)
     R.verifier(page.query_selector("#scissionModale") is None, "Scinder sans saisie : un clic a cote ferme")
     page.evaluate("id => ouvrirFenetreScission(id)", ids_lot["Casques Boreo"]); page.wait_for_timeout(150)
@@ -88,6 +92,11 @@ with ouvrir(D) as page:
     R.verifier(page.query_selector("#scissionModale") is not None, "Scinder apres saisie : le clic a cote ne ferme pas")
     page.click("#scissionClose"); page.wait_for_timeout(100)
     R.verifier(page.query_selector("#scissionModale") is None, "Scinder : ✕ ferme toujours")
+    # ---- aide : meme largeur
+    page.evaluate("ouvrirAide()"); page.wait_for_timeout(120)
+    wa = page.evaluate("document.querySelector('#aidePanel .aide-modale').getBoundingClientRect().width")
+    R.verifier(wa == 1040, "Aide : meme largeur que les autres fenetres (%d px)" % wa)
+    page.evaluate("fermerAide()"); page.wait_for_timeout(80)
     # ---- telephone : plein ecran
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(150)
     page.evaluate("() => naviguer('materiel')"); page.wait_for_timeout(150)
