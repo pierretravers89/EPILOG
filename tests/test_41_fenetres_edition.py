@@ -46,6 +46,12 @@ with ouvrir(D) as page:
     page.fill('#materiel-editor [data-f="commentaire"]', "x")
     page.click("#materiel-editor .ed-cancel"); page.wait_for_timeout(120)
     R.verifier(not ouvert(page, "#materiel-editor"), "Annuler ferme toujours, meme avec une saisie")
+    # ---- (2026.5.40) fiche : la barre des petits formulaires imbriques garde son aspect normal
+    page.evaluate("id => { ouvrirFicheExemplaire(id); ficheAction(id, 'controler', null); }", ids_mat["CAS-001"]); page.wait_for_timeout(250)
+    st = page.evaluate("""() => { const fa = document.querySelector('#ficheAction .form-actions'), qa = fa.parentElement;
+        return [getComputedStyle(fa).position, Math.round(fa.getBoundingClientRect().right - qa.getBoundingClientRect().right)]; }""")
+    R.verifier(st[0] != "sticky" and st[1] <= 0, "fiche, mini-formulaire : barre de boutons normale, sans debordement %s" % st)
+    page.evaluate("fermerEditeurs()"); page.wait_for_timeout(100)
     # ---- formulaire de creation : large, titre, Annuler
     page.evaluate("() => naviguer('prets')"); page.wait_for_timeout(200)
     page.click("#btnTogglePret"); page.wait_for_timeout(150)

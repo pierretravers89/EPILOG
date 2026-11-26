@@ -6,6 +6,15 @@ saisons d'un club, pas des sprints.
 
 ---
 
+## [2026.5.40] — 2026-11-26
+
+### Correction : barre de boutons des petits formulaires de la fiche
+
+- Dans la fiche d'un exemplaire, les petits formulaires (Contrôler, Prêter, Déclarer un incident…) recevaient par erreur le style de la barre du bas de la fenêtre : boutons Valider / Annuler dans une bande grisée qui débordait à droite. Seule la barre du bas de la fenêtre elle-même reçoit désormais ce style.
+- Test : `test_41_fenetres_edition.py` vérifie ce cas.
+
+---
+
 ## [2026.5.39] — 2026-11-26
 
 ### Une seule largeur pour toutes les fenêtres

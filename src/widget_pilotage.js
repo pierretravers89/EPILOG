@@ -11506,7 +11506,7 @@ new MutationObserver(function () {
      ils sont libres), donc tous les liens (lot, exemplaire, adherent...) restent
      justes sans recalcul. Colonnes absentes du document cible : ignorees et
      signalees ; colonnes nouvelles : vides. */
-var VERSION_EPILOG = '2026.5.39';   /* = premiere entree du CHANGELOG : controle par tests/test_27 */
+var VERSION_EPILOG = '2026.5.40';   /* = premiere entree du CHANGELOG : controle par tests/test_27 */
 /* Version affichee dans le pied de page (2026.5.26) : permet de savoir en un coup d'oeil quelle
    version tourne dans CE document (le code vit dans chaque document, une ancienne copie peut
    subsister apres une mise a jour) */

@@ -2305,3 +2305,9 @@ En-têtes : `enteteFenetre(action, objet)` ; `objetEdite(entity, row)` pour l'é
 
 Variable CSS `--largeur-fenetre: 1040px` dans `:root`, utilisée par `.en-fenetre`, `.reglages-modale` (Réglages, Découpe, Scission : leurs largeurs en ligne de 680 px sont retirées) et `.aide-modale`. La classe `.fenetre-large`, toujours posée par `majFenetres()`, n'a plus d'effet visuel (gardée pour un éventuel retour en arrière). Test : `test_41`.
 
+---
+
+### 7.89 Barre du bas des fenêtres : enfant direct seulement (2026.5.40)
+
+La règle « barre du bas collée » visait `.en-fenetre .form-actions:last-of-type`, qui attrapait aussi les barres imbriquées (mini-formulaires de `#ficheAction`, marges négatives → débordement). Elle vise désormais `.en-fenetre > .form-actions:last-child` (formulaires de création) et `.en-fenetre > .form-panel > .form-actions:last-child` (éditeurs, ajout, rattachement). Test : `test_41`.
+
