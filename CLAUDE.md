@@ -35,6 +35,9 @@ des clubs de montagne. Mainteneur : Pierre Travers. Échanges en français, au t
 6. Version marquante (fonction visible, action demandée aux clubs) : préparer une **release**
    `v2026.5.N` avec les deux fichiers de `src/` et l'entrée du CHANGELOG. Si la session ne peut pas
    la créer, donner à Pierre le texte et les étapes (Releases → Create a new release).
+   Les notes vont dans la description de la release (et l'historique dans `CHANGELOG.md`) :
+   jamais de fichier de notes déposé dans le dépôt. Releases non créables depuis ces sessions
+   (GitHub répond 403) : c'est Pierre qui publie.
 
 Une branche unique, `main`. Signalements des utilisateurs : onglet *Issues*, à consulter en début
 de session quand il y en a.
